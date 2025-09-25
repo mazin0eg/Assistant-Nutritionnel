@@ -3,7 +3,8 @@
     "@tailwindcss/cli": "^4.1.13",
     "dotenv": "^17.2.2",
     "ejs": "^3.1.10",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "mysql2": "^3.15.1"
   },
   "name": "assistant-nutritionnel",
   "version": "1.0.0",

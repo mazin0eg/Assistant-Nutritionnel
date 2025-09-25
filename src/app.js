@@ -3,6 +3,7 @@ import express from "express";
 import { join } from "path";
 import dotenv from "dotenv";
 import router from './router/router.js'
+import db from './config/database.js'
 
 const app =  express()
 
