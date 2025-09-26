@@ -10,6 +10,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+const newLocal = '';
+app.use('/assets', express.static("./src/assets/"));
+
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret',
