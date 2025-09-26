@@ -1,20 +1,36 @@
-import { render } from "ejs";
-import express from "express";
-import { join } from "path";
-import dotenv from "dotenv";
-import router from './router/router.js'
-import db from './config/database.js'
+import 'dotenv/config';
+import express from 'express';
+import session from 'express-session';
+import path from 'path';
+import router from './router/router.js';
+import authRoutes from './router/auth.routes.js';
 
-const app =  express()
+const app = express();
 
-dotenv.config()
-const PORT = process.env.PORT
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'dev-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,       
+    maxAge: 1000 * 60 * 60
+  }
+}));
 
-app.set('view engine' , 'ejs')
-app.set('views' , './src/view')
-app.use(express.static("public"));
-app.use(router)
-app.listen(PORT, () =>{
-   console.log("server runed")
- })
+app.set('view engine', 'ejs');
+app.set('views', './src/view');
+
+app.use('/auth', authRoutes);
+app.use('/', router);         
+
+app.use((err, req, res, _next) => {
+  console.error(err);
+  res.status(400).send(err.message || 'Bad request');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
