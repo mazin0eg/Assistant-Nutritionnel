@@ -2,10 +2,20 @@ import { render } from "ejs";
 import express from "express";
 import { join } from "path";
 import dotenv from "dotenv";
-import router from './router/router.js'
+import router from './router/router.js';
 import db from './config/database.js'
 
 const app =  express()
+
+// Middleware to parse JSON requests
+app.use(express.json());
+
+// If you're sending form-data (x-www-form-urlencoded)
+app.use(express.urlencoded({ extended: true }));
+
+// Use routes
+app.use("/api", router);
+
 
 dotenv.config()
 const PORT = process.env.PORT
