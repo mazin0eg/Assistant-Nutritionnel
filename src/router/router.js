@@ -16,5 +16,9 @@ r.get('/health/db', async (_req, res, next) => {
     next(e); 
   }
 });
+  
+r.get('/repas', auth, (req, res) => {
+  res.render('repas.ejs', { user: req.session.user });
+});
 
 export default r;

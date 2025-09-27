@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriTrack - Repas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'green-primary': '#10B981',
+                        'green-light': '#6EE7B7',
+                        'green-dark': '#047857',
+                        'blue-primary': '#3B82F6',
+                        'red-primary': '#EF4444',
+                        'orange-primary': '#F59E0B',
+                        'gray-light': '#F9FAFB',
+                        'gray-dark': '#374151'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'ui-sans-serif', 'system-ui']
+                    },
+                    boxShadow: {
+                        'custom': '0 4px 25px -4px rgba(0, 0, 0, 0.1)',
+                        'card': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px -8px rgba(0, 0, 0, 0.12);
+        }
+        
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        .overlay {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .drag-drop-area {
+            transition: all 0.3s ease;
+            border: 2px dashed #cbd5e1;
+        }
+        
+        .drag-drop-area.dragover {
+            border-color: #10B981;
+            background-color: rgba(16, 185, 129, 0.05);
+            transform: scale(1.02);
+        }
+        
+        .upload-progress {
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+        }
+        
+        .pulse-green {
+            animation: pulse-green 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 via-white to-gray-100 font-sans">
+    <!-- Overlay pour mobile -->
+    <div id="overlay" class="overlay fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"></div>
+    
+    <!-- Container principal -->
+    <div class="flex min-h-screen">
+        <!-- Sidebar Desktop -->
+        <div class="hidden lg:flex w-72 bg-white shadow-2xl border-r border-gray-100">
+            <div class="flex flex-col w-full">
+                <div class="px-8 py-8 border-b border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-green-600 rounded-xl flex items-center justify-center mr-3">
+                            <i class="fas fa-leaf text-white text-lg"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">NutriTrack</h1>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="flex-1 px-6 py-6">
+                    <a href="/" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300 hover:shadow-sm">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-home text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-green-primary bg-gradient-to-r from-green-50 to-green-100 rounded-2xl shadow-sm border border-green-100">
+                        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-utensils text-green-600"></i>
+                        </div>
+                        <span class="font-semibold">Repas</span>
+                    </a>
+
+                    <a href="/historique" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300 hover:shadow-sm">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-history text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Historique</span>
+                    </a>
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300 hover:shadow-sm">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-chart-line text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Statistiques</span>
+                    </a>
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300 hover:shadow-sm">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Profil</span>
+                    </a>
+                </nav>
+                
+                <!-- User Profile -->
+                <div class="px-6 py-6 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-white font-semibold">
+                                    <% if (typeof user !== 'undefined' && user.nom_complet) { %>
+                                        <%= user.nom_complet.charAt(0).toUpperCase() %><%= user.nom_complet.split(' ')[1] ? user.nom_complet.split(' ')[1].charAt(0).toUpperCase() : '' %>
+                                    <% } else { %>
+                                        U
+                                    <% } %>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">
+                                    <% if (typeof user !== 'undefined' && user.nom_complet) { %>
+                                        <%= user.nom_complet %>
+                                    <% } else { %>
+                                        Utilisateur
+                                    <% } %>
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Objectif: 
+                                    <% if (typeof user !== 'undefined' && user.goal) { %>
+                                        <%= user.goal %>
+                                    <% } else { %>
+                                        Non défini
+                                    <% } %>
+                                </p>
+                            </div>
+                        </div>
+                        <form action="/auth/logout" method="post" class="ml-2">
+                            <button type="submit" class="w-8 h-8 bg-red-50 hover:bg-red-100 rounded-lg flex items-center justify-center transition-all duration-300 hover:shadow-lg" title="Se déconnecter">
+                                <i class="fas fa-sign-out-alt text-red-500 text-sm"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Mobile -->
+        <div id="mobile-menu" class="mobile-menu fixed inset-y-0 left-0 w-80 bg-white shadow-2xl z-50 lg:hidden">
+            <div class="flex flex-col h-full">
+                <div class="px-6 py-6 border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-green-600 rounded-xl flex items-center justify-center mr-3">
+                                <i class="fas fa-leaf text-white text-lg"></i>
+                            </div>
+                            <h1 class="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">NutriTrack</h1>
+                        </div>
+                        <button id="close-menu" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-times text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Navigation Mobile -->
+                <nav class="flex-1 px-4 py-6">
+                    <a href="/" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-home text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-green-primary bg-gradient-to-r from-green-50 to-green-100 rounded-2xl shadow-sm border border-green-100">
+                        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-utensils text-green-600"></i>
+                        </div>
+                        <span class="font-semibold">Repas</span>
+                    </a>
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-chart-line text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Statistiques</span>
+                    </a>
+                    <a href="/historique" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-history text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Historique</span>
+                    </a>
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Profil</span>
+                    </a>
+                </nav>
+                
+                <!-- User Profile Mobile -->
+                <div class="px-6 py-6 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-white font-semibold">
+                                    <% if (typeof user !== 'undefined' && user.nom_complet) { %>
+                                        <%= user.nom_complet.charAt(0).toUpperCase() %><%= user.nom_complet.split(' ')[1] ? user.nom_complet.split(' ')[1].charAt(0).toUpperCase() : '' %>
+                                    <% } else { %>
+                                        U
+                                    <% } %>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">
+                                    <% if (typeof user !== 'undefined' && user.nom_complet) { %>
+                                        <%= user.nom_complet %>
+                                    <% } else { %>
+                                        Utilisateur
+                                    <% } %>
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Objectif: 
+                                    <% if (typeof user !== 'undefined' && user.goal) { %>
+                                        <%= user.goal %>
+                                    <% } else { %>
+                                        Non défini
+                                    <% } %>
+                                </p>
+                            </div>
+                        </div>
+                        <form action="/auth/logout" method="post" class="ml-2">
+                            <button type="submit" class="w-8 h-8 bg-red-50 hover:bg-red-100 rounded-lg flex items-center justify-center transition-all duration-300 hover:shadow-lg" title="Se déconnecter">
+                                <i class="fas fa-sign-out-alt text-red-500 text-sm"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="flex-1 lg:p-8 p-4">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <div class="flex items-center lg:hidden mb-4">
+                        <button id="menu-toggle" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-lg border border-gray-100 mr-4 hover:shadow-xl transition-all duration-300">
+                            <i class="fas fa-bars text-gray-700"></i>
+                        </button>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-green-600 rounded-lg flex items-center justify-center mr-2">
+                                <i class="fas fa-leaf text-white text-sm"></i>
+                            </div>
+                            <h1 class="text-xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">NutriTrack</h1>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-2">
+                        Repas - 
+                        <% if (typeof user !== 'undefined' && user.nom_complet) { %>
+                            <%= user.nom_complet %>
+                        <% } else { %>
+                            Utilisateur
+                        <% } %>
+                    </h2>
+                    <p class="text-gray-600 text-lg">
+                        Gérez vos repas et analysez votre nutrition - Objectif: 
+                        <strong>
+                            <% if (typeof user !== 'undefined' && user.goal) { %>
+                                <%= user.goal %>
+                            <% } else { %>
+                                Non défini
+                            <% } %>
+                        </strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Contenu principal de la page Repas -->
+            <div class="max-w-6xl mx-auto">
+                <!-- Section Ajouter un repas -->
+                <div class="bg-white rounded-3xl shadow-card border border-gray-50 p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Ajouter un repas</h3>
+                    <p class="text-gray-600 mb-6">Téléchargez une photo de votre repas pour l'analyser</p>
+                    
+                    <!-- Zone d'upload -->
+                    <div class="border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">
+                        <div class="w-16 h-16 bg-gray-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-cloud-upload-alt text-white text-2xl"></i>
+                        </div>
+                        <p class="text-gray-600 mb-4">Glissez votre photo ici ou</p>
+                        <button class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-camera mr-2"></i>
+                            Choisir une photo
+                        </button>
+                    </div>
+                    
+                    <!-- Bouton analyser -->
+                    <div class="mt-6 text-center">
+                        <button class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-12 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            Analyser le repas
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Résultats de l'analyse -->
+                <div class="bg-white rounded-3xl shadow-card border border-gray-50 p-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Résultats de l'analyse</h3>
+                    
+                    <!-- Image analysée et tableau des aliments -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <!-- Image du plat -->
+                        <div class="relative">
+                            <div class="rounded-2xl overflow-hidden shadow-lg">
+                                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=400&fit=crop&crop=center&auto=format&q=80" 
+                                     alt="Plat analysé" class="w-full h-80 object-cover">
+                            </div>
+                        </div>
+                        
+                        <!-- Tableau des aliments détectés -->
+                        <div class="bg-gray-50 rounded-2xl p-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-6">Aliments détectés</h4>
+                            
+                            <!-- Header du tableau -->
+                            <div class="grid grid-cols-3 gap-4 mb-4 text-sm font-medium text-gray-600 border-b border-gray-200 pb-2">
+                                <div>Aliments</div>
+                                <div class="text-center">Quantité</div>
+                                <div class="text-center">Calories</div>
+                            </div>
+                            
+                            <!-- Lignes du tableau -->
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-3 gap-4 items-center py-3 border-b border-gray-100">
+                                    <div class="font-medium text-gray-800">Poulet</div>
+                                    <div class="text-center font-semibold">150g</div>
+                                    <div class="text-center font-semibold">250 kcal</div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-4 items-center py-3 border-b border-gray-100">
+                                    <div class="font-medium text-gray-800">Riz</div>
+                                    <div class="text-center font-semibold">200g</div>
+                                    <div class="text-center font-semibold">300 kcal</div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-4 items-center py-3">
+                                    <div class="font-medium text-gray-800">Brocoli</div>
+                                    <div class="text-center font-semibold">100g</div>
+                                    <div class="text-center font-semibold">50 kcal</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Résumé nutritionnel avec grandes valeurs -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8 text-center">
+                        <div class="bg-gray-50 rounded-2xl p-6">
+                            <div class="text-5xl font-bold text-gray-800 mb-2">600</div>
+                            <div class="text-gray-600 font-medium">kcal Total</div>
+                        </div>
+                        <div class="bg-green-50 rounded-2xl p-6">
+                            <div class="text-5xl font-bold text-green-500 mb-2">35g</div>
+                            <div class="text-gray-600 font-medium">Protéines</div>
+                        </div>
+                        <div class="bg-orange-50 rounded-2xl p-6">
+                            <div class="text-5xl font-bold text-orange-500 mb-2">70g</div>
+                            <div class="text-gray-600 font-medium">Glucides</div>
+                        </div>
+                        <div class="bg-red-50 rounded-2xl p-6">
+                            <div class="text-5xl font-bold text-red-500 mb-2">15g</div>
+                            <div class="text-gray-600 font-medium">Lipides</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bouton Voir les détails -->
+                    <div class="text-center">
+                        <button class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-12 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            <i class="fas fa-eye mr-2"></i>
+                            Voir les détails
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input file caché -->
+    <input type="file" id="file-input" accept="image/*" class="hidden">
+
+    <!-- Scripts -->
+    <script>
+        // Variables globales
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuToggle = document.getElementById('menu-toggle');
+        const closeMenu = document.getElementById('close-menu');
+        const overlay = document.getElementById('overlay');
+
+        // Menu mobile
+        menuToggle?.addEventListener('click', function() {
+            mobileMenu.classList.add('open');
+            overlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('open');
+            overlay.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        closeMenu?.addEventListener('click', closeMobileMenu);
+        overlay?.addEventListener('click', closeMobileMenu);
+
+        // Fonctionnalité de base pour les boutons
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Effet visuel au clic
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Animation au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation des éléments au chargement
+            const cards = document.querySelectorAll('.bg-white');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+
+        // Fermer avec Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+                closeMobileMenu();
+            }
+        });
+    </script>
+</body>
+</html>
