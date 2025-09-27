@@ -1,20 +1,736 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <title>Accueil</title>
-  <link rel="stylesheet" href="/output.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriTrack - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'green-primary': '#10B981',
+                        'green-light': '#6EE7B7',
+                        'green-dark': '#047857',
+                        'blue-primary': '#3B82F6',
+                        'red-primary': '#EF4444',
+                        'gray-light': '#F9FAFB',
+                        'gray-dark': '#374151',
+                        'purple-primary': '#8B5CF6',
+                        'orange-primary': '#F59E0B'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'ui-sans-serif', 'system-ui']
+                    },
+                    boxShadow: {
+                        'custom': '0 4px 25px -4px rgba(0, 0, 0, 0.1)',
+                        'card': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)'
+                    },
+                    backdropBlur: {
+                        'xs': '2px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .food-image {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .food-image:hover {
+            transform: scale(1.1);
+        }
+        
+        .food-container:hover .food-image {
+            transform: scale(1.05);
+        }
+        
+        .food-image {
+            background: linear-gradient(45deg, #f3f4f6, #e5e7eb);
+            background-size: 200% 200%;
+            animation: shimmer 2s infinite;
+        }
+        
+        .food-image.loaded {
+            animation: none;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% -200%; }
+            100% { background-position: 200% 200%; }
+        }
+        
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        .overlay {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+    </style>
 </head>
-<body class="p-6">
-  <header class="flex items-center justify-between">
-    <h1 class="text-2xl font-bold">Bienvenue, <%= user.nom_complet %></h1>
-    <form action="/auth/logout" method="post">
-      <button class="border px-3 py-1 rounded">Se déconnecter</button>
-    </form>
-  </header>
+<body class="bg-gradient-to-br from-gray-50 via-white to-gray-100 font-sans">
+    <!-- Overlay pour mobile -->
+    <div id="overlay" class="overlay fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"></div>
+    
+    <!-- Container principal -->
+    <div class="flex min-h-screen">
+        <!-- Sidebar Desktop -->
+        <div class="hidden lg:flex w-72 bg-white shadow-2xl border-r border-gray-100">
+            <!-- Logo -->
+            <div class="flex flex-col w-full">
+                <div class="px-8 py-8 border-b border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-green-600 rounded-xl flex items-center justify-center mr-3">
+                            <i class="fas fa-leaf text-white text-lg"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">NutriTrack</h1>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="flex-1 px-6 py-6">
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-green-primary bg-gradient-to-r from-green-50 to-green-100 rounded-2xl shadow-sm border border-green-100">
+                        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-home text-green-600"></i>
+                        </div>
+                        <span class="font-semibold">Dashboard</span>
+                    </a>
+                    <a href="repas.html" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300 hover:shadow-sm">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-utensils text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Repas</span>
+                    </a>
 
-  <section class="mt-6">
-    <p>Objectif : <strong><%= user.goal %></strong></p>
-  </section>
+                    <a href="historique.html" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300 hover:shadow-sm">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-history text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Historique</span>
+                    </a>
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300 hover:shadow-sm">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-chart-line text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Statistiques</span>
+                    </a>
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300 hover:shadow-sm">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Profil</span>
+                    </a>
+                </nav>
+                
+                <!-- User Profile -->
+                <div class="px-6 py-6 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-white font-semibold">
+                                    <% if (typeof user !== 'undefined' && user.nom_complet) { %>
+                                        <%= user.nom_complet.charAt(0).toUpperCase() %><%= user.nom_complet.split(' ')[1] ? user.nom_complet.split(' ')[1].charAt(0).toUpperCase() : '' %>
+                                    <% } else { %>
+                                        U
+                                    <% } %>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">
+                                    <% if (typeof user !== 'undefined' && user.nom_complet) { %>
+                                        <%= user.nom_complet %>
+                                    <% } else { %>
+                                        Utilisateur
+                                    <% } %>
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Objectif: 
+                                    <% if (typeof user !== 'undefined' && user.goal) { %>
+                                        <%= user.goal %>
+                                    <% } else { %>
+                                        Non défini
+                                    <% } %>
+                                </p>
+                            </div>
+                        </div>
+                        <form action="/auth/logout" method="post" class="ml-2">
+                            <button type="submit" class="w-8 h-8 bg-red-50 hover:bg-red-100 rounded-lg flex items-center justify-center transition-all duration-300 hover:shadow-lg" title="Se déconnecter">
+                                <i class="fas fa-sign-out-alt text-red-500 text-sm"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Mobile -->
+        <div id="mobile-menu" class="mobile-menu fixed inset-y-0 left-0 w-80 bg-white shadow-2xl z-50 lg:hidden">
+            <div class="flex flex-col h-full">
+                <!-- Header Mobile -->
+                <div class="px-6 py-6 border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-green-600 rounded-xl flex items-center justify-center mr-3">
+                                <i class="fas fa-leaf text-white text-lg"></i>
+                            </div>
+                            <h1 class="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">NutriTrack</h1>
+                        </div>
+                        <button id="close-menu" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-times text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Navigation Mobile -->
+                <nav class="flex-1 px-4 py-6">
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-green-primary bg-gradient-to-r from-green-50 to-green-100 rounded-2xl shadow-sm border border-green-100">
+                        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-home text-green-600"></i>
+                        </div>
+                        <span class="font-semibold">Dashboard</span>
+                    </a>
+                    <a href="repas.html" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-utensils text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Repas</span>
+                    </a>
+
+                    <a href="historique.html" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-history text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Historique</span>
+                    </a>
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-chart-line text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Statistiques</span>
+                    </a>
+                    <a href="#" class="flex items-center px-6 py-4 mb-3 text-gray-600 hover:bg-gray-50 rounded-2xl transition-all duration-300">
+                        <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-gray-500"></i>
+                        </div>
+                        <span class="font-medium">Profil</span>
+                    </a>
+                </nav>
+                
+                <!-- User Profile Mobile -->
+                <div class="px-6 py-6 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-white font-semibold">
+                                    <% if (typeof user !== 'undefined' && user.nom_complet) { %>
+                                        <%= user.nom_complet.charAt(0).toUpperCase() %><%= user.nom_complet.split(' ')[1] ? user.nom_complet.split(' ')[1].charAt(0).toUpperCase() : '' %>
+                                    <% } else { %>
+                                        U
+                                    <% } %>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">
+                                    <% if (typeof user !== 'undefined' && user.nom_complet) { %>
+                                        <%= user.nom_complet %>
+                                    <% } else { %>
+                                        Utilisateur
+                                    <% } %>
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Objectif: 
+                                    <% if (typeof user !== 'undefined' && user.goal) { %>
+                                        <%= user.goal %>
+                                    <% } else { %>
+                                        Non défini
+                                    <% } %>
+                                </p>
+                            </div>
+                        </div>
+                        <form action="/auth/logout" method="post" class="ml-2">
+                            <button type="submit" class="w-8 h-8 bg-red-50 hover:bg-red-100 rounded-lg flex items-center justify-center transition-all duration-300 hover:shadow-lg" title="Se déconnecter">
+                                <i class="fas fa-sign-out-alt text-red-500 text-sm"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="flex-1 lg:p-8 p-4">
+            <!-- Header Mobile/Desktop -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <div class="flex items-center lg:hidden mb-4">
+                        <button id="menu-toggle" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-lg border border-gray-100 mr-4 hover:shadow-xl transition-all duration-300">
+                            <i class="fas fa-bars text-gray-700"></i>
+                        </button>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-green-600 rounded-lg flex items-center justify-center mr-2">
+                                <i class="fas fa-leaf text-white text-sm"></i>
+                            </div>
+                            <h1 class="text-xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">NutriTrack</h1>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-2">
+                        Bienvenue, 
+                        <% if (typeof user !== 'undefined' && user.nom_complet) { %>
+                            <%= user.nom_complet %>
+                        <% } else { %>
+                            Utilisateur
+                        <% } %>
+                    </h2>
+                    <p class="text-gray-600 text-lg">
+                        Objectif: 
+                        <strong>
+                            <% if (typeof user !== 'undefined' && user.goal) { %>
+                                <%= user.goal %>
+                            <% } else { %>
+                                Non défini
+                            <% } %>
+                        </strong> 
+                        - Stats & suivi quotidien
+                    </p>
+                </div>
+                <div class="hidden lg:flex items-center space-x-4">
+                    <button class="w-12 h-12 bg-white rounded-xl shadow-lg border border-gray-100 flex items-center justify-center hover:shadow-xl transition-all duration-300">
+                        <i class="fas fa-bell text-gray-600"></i>
+                    </button>
+                    <button class="w-12 h-12 bg-white rounded-xl shadow-lg border border-gray-100 flex items-center justify-center hover:shadow-xl transition-all duration-300">
+                        <i class="fas fa-search text-gray-600"></i>
+                    </button>
+                    <form action="/auth/logout" method="post" class="ml-2">
+                        <button type="submit" class="w-12 h-12 bg-red-50 hover:bg-red-100 rounded-xl shadow-lg border border-red-100 flex items-center justify-center hover:shadow-xl transition-all duration-300" title="Se déconnecter">
+                            <i class="fas fa-sign-out-alt text-red-500"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+                <!-- Calories Card -->
+                <div class="card-hover bg-white rounded-2xl p-6 lg:p-8 shadow-card border border-gray-50 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-400/10 to-green-600/10 rounded-full -mr-10 -mt-10"></div>
+                    <div class="relative">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-fire text-white text-xl"></i>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">Objectif</span>
+                            </div>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-2">1,200</h3>
+                        <p class="text-sm font-medium text-gray-500">Calories consommées</p>
+                        <div class="mt-4 w-full bg-gray-100 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Protéines Card -->
+                <div class="card-hover bg-white rounded-2xl p-6 lg:p-8 shadow-card border border-gray-50 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/10 to-blue-600/10 rounded-full -mr-10 -mt-10"></div>
+                    <div class="relative">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-dumbbell text-white text-xl"></i>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Excellent</span>
+                            </div>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-2">140g</h3>
+                        <p class="text-sm font-medium text-gray-500">Protéines</p>
+                        <div class="mt-4 w-full bg-gray-100 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full" style="width: 88%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Glucides Card -->
+                <div class="card-hover bg-white rounded-2xl p-6 lg:p-8 shadow-card border border-gray-50 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/10 to-purple-600/10 rounded-full -mr-10 -mt-10"></div>
+                    <div class="relative">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-bread-slice text-white text-xl"></i>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">Bon</span>
+                            </div>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-2">95g</h3>
+                        <p class="text-sm font-medium text-gray-500">Glucides</p>
+                        <div class="mt-4 w-full bg-gray-100 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-purple-400 to-purple-600 h-2 rounded-full" style="width: 65%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lipides Card -->
+                <div class="card-hover bg-white rounded-2xl p-6 lg:p-8 shadow-card border border-gray-50 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-400/10 to-orange-600/10 rounded-full -mr-10 -mt-10"></div>
+                    <div class="relative">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-tint text-white text-xl"></i>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded-full">Modéré</span>
+                            </div>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-2">45g</h3>
+                        <p class="text-sm font-medium text-gray-500">Lipides</p>
+                        <div class="mt-4 w-full bg-gray-100 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-orange-400 to-orange-600 h-2 rounded-full" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Ajouter repas -->
+            <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-3xl p-8 lg:p-12 shadow-card border border-green-100 mb-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-300/20 to-green-500/20 rounded-full -mr-16 -mt-16"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-green-400/20 to-green-600/20 rounded-full -ml-12 -mb-12"></div>
+                
+                <!-- Images d'exemple en arrière-plan -->
+                <div class="absolute top-4 right-8 w-16 h-16 rounded-2xl overflow-hidden opacity-20 transform rotate-12">
+                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop&crop=center&auto=format&q=60" alt="Food" class="w-full h-full object-cover">
+                </div>
+                <div class="absolute bottom-8 right-20 w-12 h-12 rounded-xl overflow-hidden opacity-20 transform -rotate-6">
+                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=200&h=200&fit=crop&crop=center&auto=format&q=60" alt="Food" class="w-full h-full object-cover">
+                </div>
+                <div class="absolute top-16 left-8 w-14 h-14 rounded-2xl overflow-hidden opacity-20 transform -rotate-12">
+                    <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&h=200&fit=crop&crop=center&auto=format&q=60" alt="Food" class="w-full h-full object-cover">
+                </div>
+                
+                <div class="relative text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                        <i class="fas fa-plus text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl lg:text-3xl font-bold text-gray-800 mb-4">Ajouter un repas</h3>
+                    <p class="text-gray-600 text-lg mb-8 max-w-2xl mx-auto leading-relaxed">Téléchargez une photo de votre repas ou ajoutez manuellement les informations nutritionnelles pour un suivi précis</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <a href="repas.html" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 w-full sm:w-auto text-center">
+                            <i class="fas fa-camera mr-2"></i>
+                            Photo du repas
+                        </a>
+                        <button class="bg-white text-green-600 px-8 py-4 rounded-2xl font-semibold border-2 border-green-200 hover:border-green-300 transition-all duration-300 hover:shadow-lg w-full sm:w-auto">
+                            <i class="fas fa-keyboard mr-2"></i>
+                            Saisie manuelle
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historique rapide -->
+            <div class="bg-white rounded-3xl shadow-card border border-gray-50">
+                <div class="p-6 lg:p-8 border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-bold text-gray-800">Historique rapide</h3>
+                        <button class="text-green-600 hover:text-green-700 font-medium text-sm flex items-center transition-colors">
+                            Voir tout
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6 lg:p-8">
+                    <!-- Repas 1 -->
+                    <div class="food-container flex items-center justify-between py-6 border-b border-gray-50 last:border-b-0 hover:bg-gray-25 rounded-xl px-4 transition-all duration-300 hover:shadow-lg">
+                        <div class="flex items-center">
+                            <div class="relative w-16 h-16 rounded-2xl mr-6 shadow-lg overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=400&fit=crop&crop=center&auto=format&q=80" 
+                                     alt="Pizza Margherita" class="food-image w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-br from-orange-400/10 to-orange-600/10"></div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 text-lg">Pizza Margherita</h4>
+                                <p class="text-sm text-gray-500 mt-1">Aujourd'hui, 12:30</p>
+                                <div class="flex items-center mt-2">
+                                    <span class="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full mr-2">Déjeuner</span>
+                                    <span class="text-xs text-gray-400">• Portion complète</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-gray-800 text-xl">1450</p>
+                            <p class="text-sm text-gray-500">kcal</p>
+                            <div class="flex items-center justify-end mt-2">
+                                <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                                <p class="text-xs text-green-600 font-medium">Équilibré</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Repas 2 -->
+                    <div class="food-container flex items-center justify-between py-6 border-b border-gray-50 last:border-b-0 hover:bg-gray-25 rounded-xl px-4 transition-all duration-300 hover:shadow-lg">
+                        <div class="flex items-center">
+                            <div class="relative w-16 h-16 rounded-2xl mr-6 shadow-lg overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=400&fit=crop&crop=center&auto=format&q=80" 
+                                     alt="Crêpe Nutella" class="food-image w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-br from-yellow-400/10 to-yellow-600/10"></div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 text-lg">Crêpe Nutella</h4>
+                                <p class="text-sm text-gray-500 mt-1">Aujourd'hui, 08:00</p>
+                                <div class="flex items-center mt-2">
+                                    <span class="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full mr-2">Petit-déj</span>
+                                    <span class="text-xs text-gray-400">• Gourmandise</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-gray-800 text-xl">1020</p>
+                            <p class="text-sm text-gray-500">kcal</p>
+                            <div class="flex items-center justify-end mt-2">
+                                <div class="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+                                <p class="text-xs text-orange-600 font-medium">Riche</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Repas 3 -->
+                    <div class="food-container flex items-center justify-between py-6 border-b border-gray-50 last:border-b-0 hover:bg-gray-25 rounded-xl px-4 transition-all duration-300 hover:shadow-lg">
+                        <div class="flex items-center">
+                            <div class="relative w-16 h-16 rounded-2xl mr-6 shadow-lg overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1539252554453-80ab65ce3586?w=400&h=400&fit=crop&crop=center&auto=format&q=80" 
+                                     alt="Sandwich Poulet" class="food-image w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-br from-green-400/10 to-green-600/10"></div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 text-lg">Sandwich Poulet</h4>
+                                <p class="text-sm text-gray-500 mt-1">Hier, 19:40</p>
+                                <div class="flex items-center mt-2">
+                                    <span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full mr-2">Dîner</span>
+                                    <span class="text-xs text-gray-400">• Protéiné</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-gray-800 text-xl">780</p>
+                            <p class="text-sm text-gray-500">kcal</p>
+                            <div class="flex items-center justify-end mt-2">
+                                <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                                <p class="text-xs text-green-600 font-medium">Sain</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script pour les interactions -->
+    <script>
+        // Variables globales
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuToggle = document.getElementById('menu-toggle');
+        const closeMenu = document.getElementById('close-menu');
+        const overlay = document.getElementById('overlay');
+
+        // Menu mobile toggle
+        menuToggle?.addEventListener('click', function() {
+            mobileMenu.classList.add('open');
+            overlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Fermer le menu mobile
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('open');
+            overlay.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        closeMenu?.addEventListener('click', closeMobileMenu);
+        overlay?.addEventListener('click', closeMobileMenu);
+
+        // Fermer avec Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+                closeMobileMenu();
+            }
+        });
+
+        // Animation au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation des cartes de stats avec délai progressif
+            const cards = document.querySelectorAll('.grid > div');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+
+            // Animation du contenu principal
+            const mainContent = document.querySelector('.flex-1');
+            setTimeout(() => {
+                mainContent.classList.add('animate-fade-in-up');
+            }, 300);
+
+            // Hover effects améliorés pour les liens de navigation
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('text-green-primary')) {
+                        this.style.transform = 'translateX(8px)';
+                        this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+
+            // Animation des boutons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Effet ripple
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('absolute', 'bg-white', 'bg-opacity-30', 'rounded-full', 'pointer-events-none');
+                    ripple.style.transform = 'scale(0)';
+                    ripple.style.transition = 'transform 0.6s ease-out';
+                    
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.style.transform = 'scale(2)';
+                        ripple.style.opacity = '0';
+                    }, 10);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Animation des éléments de l'historique au scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                    }
+                });
+            }, observerOptions);
+
+            // Observer tous les éléments avec animation
+            document.querySelectorAll('.card-hover, .bg-gradient-to-r').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Gestion du chargement des images
+            const foodImages = document.querySelectorAll('.food-image');
+            foodImages.forEach(img => {
+                // Ajouter un placeholder pendant le chargement
+                img.addEventListener('load', function() {
+                    this.classList.add('loaded');
+                    this.style.animation = 'fadeIn 0.5s ease-in-out';
+                });
+                
+                // Gestion d'erreur de chargement
+                img.addEventListener('error', function() {
+                    this.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f3f4f6'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='0.3em' font-family='Arial' font-size='12' fill='%23666'%3E🍽️%3C/text%3E%3C/svg%3E`;
+                    this.classList.add('loaded');
+                });
+            });
+        });
+
+        // Gestion du responsive et redimensionnement
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024 && mobileMenu.classList.contains('open')) {
+                closeMobileMenu();
+            }
+        });
+
+        // Smooth scroll pour les liens
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
