@@ -8,11 +8,10 @@
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
     --color-red-300: oklch(80.8% 0.114 19.571);
-
     --color-red-500: oklch(63.7% 0.237 25.331);
     --color-red-600: oklch(57.7% 0.245 27.325);
     --color-orange-500: oklch(70.5% 0.213 47.604);
-
+    --color-amber-300: oklch(87.9% 0.169 91.605);
     --color-green-300: oklch(87.1% 0.15 154.449);
     --color-green-600: oklch(62.7% 0.194 149.214);
     --color-gray-50: oklch(98.5% 0.002 247.839);
@@ -357,10 +356,14 @@
   .border-gray-200 {
     border-color: var(--color-gray-200);
   }
-
   .border-gray-300 {
     border-color: var(--color-gray-300);
-
+  }
+  .border-green-300 {
+    border-color: var(--color-green-300);
+  }
+  .border-red-300 {
+    border-color: var(--color-red-300);
   }
   .bg-\[\#22c55e\] {
     background-color: #22c55e;
@@ -368,10 +371,11 @@
   .bg-\[\#eaeef4\] {
     background-color: #eaeef4;
   }
-
   .bg-gray-50 {
     background-color: var(--color-gray-50);
-
+  }
+  .bg-green-300 {
+    background-color: var(--color-green-300);
   }
   .bg-white {
     background-color: var(--color-white);
@@ -417,9 +421,6 @@
   }
   .text-left {
     text-align: left;
-  }
-  .font-\[Poppins\] {
-    font-family: Poppins;
   }
   .text-2xl {
     font-size: var(--text-2xl);
@@ -518,13 +519,6 @@
   .placeholder\:text-\[\#98a2b3\] {
     &::placeholder {
       color: #98a2b3;
-    }
-  }
-  .hover\:bg-green-600 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-green-600);
-      }
     }
   }
 }
