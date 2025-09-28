@@ -4,10 +4,14 @@ import session from 'express-session';
 import path from 'path';
 import router from './router/router.js';
 import authRoutes from './router/auth.routes.js';
+import aiRoutes from "./router/ai.routes.js";
 
 const app = express();
 
+
+
 app.use(express.json());
+app.use("/ai", aiRoutes);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 const newLocal = '';
