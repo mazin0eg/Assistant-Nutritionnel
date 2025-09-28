@@ -8,6 +8,8 @@ import aiRoutes from "./router/ai.routes.js";
 
 const app = express();
 
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 
 app.use(express.json());
