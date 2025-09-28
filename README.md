@@ -182,10 +182,3 @@ Ce format est le **contrat d’échange** entre l’IA, la base de données et l
    ```
 
 ---
-
-## 👥 Auteurs & Organisation
-- **Responsable GitHub :** …  
-- **Responsable JIRA & Diagramme de classe :** …  
-- **Figma & Architecture technique :** …  
-
----
