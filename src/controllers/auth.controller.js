@@ -1,43 +1,53 @@
 import bcrypt from 'bcrypt';
-import { findByEmail, createUser } from '../models/users.model.js';
-
-const GOALS = ['ATHLETE','PATIENT','LOSE_WEIGHT','GAIN_WEIGHT'];
+import User from '../models/users.model.js'; 
+import { validationResult } from 'express-validator';
 
 export function getRegister(req, res) {
-  res.render('auth/register.ejs');
+  res.render('auth/register.ejs', { errors: {}, old: {} });
 }
 
 export function getLogin(req, res) {
-  res.render('auth/login.ejs');
+  res.render('auth/login.ejs', { errors: {}, old: {} });
 }
 
 export async function postRegister(req, res, next) {
   try {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).render('auth/register.ejs', {
+        errors: errors.mapped(),
+        old: req.body
+      });
+    }
+
     const { fullName, email, password, goal } = req.body;
 
-    if (!fullName || !email || !password || !goal) {
-      throw new Error('Veuillez remplir tous les champs.');
-    }
-    if (!GOALS.includes(goal)) {
-      throw new Error('Objectif invalide.');
-    }
-
-    const exists = await findByEmail(email);
+    const exists = await User.findByEmail(email);
     if (exists) {
-      throw new Error('Cet email est déjà utilisé.');
+      return res.status(400).render('auth/register.ejs', {
+        errors: { email: { msg: 'Cet email est déjà utilisé.' } },
+        old: req.body
+      });
     }
 
     const hash = await bcrypt.hash(password, 10);
 
-    const id = await createUser({
+    const user = await User.create({
       fullName: String(fullName).trim(),
       email: String(email).trim(),
       passwordHash: hash,
       goal
     });
 
-    req.session.user = { id, fullName, email, goal };
-    res.redirect('/'); 
+    req.session.user = {
+      id: user.id,
+      fullName: user.fullName,
+      email: user.email,
+      goal: user.goal
+    };
+
+    res.redirect('/');
   } catch (e) {
     next(e);
   }
@@ -45,18 +55,36 @@ export async function postRegister(req, res, next) {
 
 export async function postLogin(req, res, next) {
   try {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).render('auth/login.ejs', {
+        errors: errors.mapped(),
+        old: req.body
+      });
+    }
+
     const { email, password } = req.body;
-    if (!email || !password) throw new Error('Email et mot de passe requis.');
 
-    const user = await findByEmail(email);
-    if (!user) throw new Error('Identifiants invalides.');
+    const user = await User.findByEmail(email);
+    if (!user) {
+      return res.status(400).render('auth/login.ejs', {
+        errors: { email: {msg: 'Email ou mot de passe incorrect.'}},                
+        old: { email }
+      });
+    }
 
-    const ok = await bcrypt.compare(password, user.password_h);
-    if (!ok) throw new Error('Identifiants invalides.');
+    const ok = await bcrypt.compare(password, user.passwordHash);
+    if (!ok) {
+      return res.status(400).render('auth/login.ejs', {
+        errors: { password: {msg: 'Email ou mot de passe incorrect.'}},                
+        old: { email }
+      });
+    }
 
     req.session.user = {
       id: user.id,
-      fullName: user.nom_complet,
+      fullName: user.fullName,
       email: user.email,
       goal: user.goal
     };
