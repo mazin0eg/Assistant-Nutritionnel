@@ -26,3 +26,14 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
+CREATE TABLE recommendations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  goal ENUM('ATHLETE','PATIENT','LOSE_WEIGHT','GAIN_WEIGHT') NOT NULL,       
+  description TEXT,           
+  calories INT,
+  protein INT,         
+  ingredients JSON, 
+  image_url VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+);
