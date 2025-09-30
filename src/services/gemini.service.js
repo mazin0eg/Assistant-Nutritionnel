@@ -18,6 +18,7 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 export async function analyzeMealAI(imageBase64, mimeType) {
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
 
+  // Prompt = instructions for Gemini
   const prompt = `
     You are a nutrition analysis system.
     Analyze the meal in the image and output ONLY valid JSON:
@@ -28,22 +29,26 @@ export async function analyzeMealAI(imageBase64, mimeType) {
     }
   `;
 
+  console.log("Sending request to Gemini...");
+
   const result = await model.generateContent([
     { text: prompt },
     { inlineData: { mimeType, data: imageBase64 } },
   ]);
 
+  // get raw Gemini response
   let text = result.response.candidates[0].content.parts[0].text;
+  console.log("Raw Gemini Output:", text);
 
-  
-  text = text.trim()
-             .replace(/^```json/, '')   
-             .replace(/```$/, '');     
+  // clean Gemini response if it adds ```json ... ```
+  text = text.trim().replace(/^```json/, "").replace(/```$/, "");
 
   try {
-    return JSON.parse(text); 
+    const parsed = JSON.parse(text);
+    console.log("Parsed JSON:", parsed);
+    return parsed;
   } catch (err) {
-    console.error("Raw Gemini output:", text);
+    console.error("Failed to parse JSON:", text);
     throw new Error("Gemini did not return valid JSON");
   }
 }
