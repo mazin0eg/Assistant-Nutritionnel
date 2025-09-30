@@ -1,3 +1,4 @@
+
 import { analyzeMealAI } from "../services/gemini.service.js";
 import { saveMeal } from "../models/meal.model.js";
 
@@ -33,3 +34,4 @@ export async function analyzeMeal(req, res) {
     res.status(500).json({ error: "Server error", details: err.message });
   }
 }
+
