@@ -9,13 +9,21 @@ export default class Recommendation{
         this.description = description;
         this.calories=calories;
         this.protein= protein;
-        this.ingredients= ingredients;
+        try {
+
+         this.ingredients= ingredients ? JSON.parse(ingredients) : [];
+
+        }catch{
+          this.ingredients = [];
+        }
+
         this.image_url= image_url;
         this.created_at = created_at;
     }
 
    
     static async create({goal , description , calories , protein , ingredients , image_url}){
+        const ing = ingredients ? JSON.stringify(ingredients) : JSON.stringify([])
         const [res] = await db.execute(
             `INSERT INTO recommentation (goal , description , calories , protein , ingredients, image_url )
             VALUES (?, ?, ?, ?, ?, ?)
@@ -26,13 +34,18 @@ export default class Recommendation{
 
     static async findById(id){
 
-        const [row] = await db.execute(
+        const [rows] = await db.execute(
 
             `SELECT * FROM recommendations WHERE id = ? LIMIT 1 `,
             [id]
         );
 
         return rows[0] ? new Recommendation(rows[0]) : null;
+    }
+
+    static async findAll(){
+        const [rows] = await db.execute(` SELECT * FROM recommendations WHERE id = ? LIMIT 1` , [id]);
+        return rows [0] ? new Recommendation (rows[0]) : null ;
     }
 }
  
