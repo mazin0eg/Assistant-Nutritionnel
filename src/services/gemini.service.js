@@ -3,7 +3,7 @@ import { HumanMessage } from "@langchain/core/messages";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const gemini = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash-lite", 
+  model: process.env.GOOGLE_API_VERSION, 
   apiKey: process.env.GOOGLE_API_KEY,
   temperature: 0.7,
 });
@@ -18,7 +18,6 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 export async function analyzeMealAI(imageBase64, mimeType) {
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
 
-  // Prompt = instructions for Gemini
   const prompt = `
     You are a nutrition analysis system.
     Analyze the meal in the image and output ONLY valid JSON:
@@ -36,11 +35,9 @@ export async function analyzeMealAI(imageBase64, mimeType) {
     { inlineData: { mimeType, data: imageBase64 } },
   ]);
 
-  // get raw Gemini response
   let text = result.response.candidates[0].content.parts[0].text;
   console.log("Raw Gemini Output:", text);
 
-  // clean Gemini response if it adds ```json ... ```
   text = text.trim().replace(/^```json/, "").replace(/```$/, "");
 
   try {
