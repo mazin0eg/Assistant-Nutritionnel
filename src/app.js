@@ -6,6 +6,9 @@ import router from './router/router.js';
 import authRoutes from './router/auth.routes.js';
 import aiRoutes from "./router/ai.routes.js";
 
+import recommendationRoutes from './router/recommendation.js';
+
+
 const app = express();
 
 app.use(express.json({ limit: "10mb" }));
@@ -40,6 +43,9 @@ app.use((err, req, res, _next) => {
   console.error(err);
   res.status(400).send(err.message || 'Bad request');
 });
+
+app.use('/recommendations', recommendationRoutes);
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
