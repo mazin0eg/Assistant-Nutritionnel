@@ -11,4 +11,12 @@ r.get('/analyse', auth, (req, res) => {
   res.render('meals/meal-analyse.ejs');
 });
 
+r.get('/historique', auth, (req, res) => {
+  res.render('meals/mon-historique.ejs');
+});
+
+r.get('/layout', auth, (req, res) => {
+  res.render('layouts/main.ejs');
+});
+
 export default r;
