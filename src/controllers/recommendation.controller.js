@@ -105,3 +105,12 @@ export async function postEditRecommendation(req, res, next) {
     }
 }
 
+export async function postDeleteRecommendation(req, res, next) {
+    try {
+        const { id } = req.params;
+        await Recommendation.delete(id);
+        res.json({ message: "Recommendation deleted" });
+    } catch (e) {
+        next(e);
+    }
+}

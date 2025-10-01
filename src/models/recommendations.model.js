@@ -71,11 +71,9 @@ export default class Recommendation {
 
     }
 
-    static async delete(id){
-        await db.execute(
-            `DELETE FROM recommendations WHERE id = ?` , [id]
-        );
-        return true ;
+     static async delete(id) {
+        await db.execute(`DELETE FROM recommendations WHERE id = ?`, [id]);
+        return true;
     }
 
 }
