@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutriTrack • Historique des repas</title>
+  <link rel="stylesheet" href="/output.css" />
+
+</head>
+<body class="min-h-screen bg-[#F9FAFB] font-sans text-[#111827]">
+  <div class="flex min-h-screen">
+
+    <main class="flex-1">
+      <div class="h-14 md:h-16"></div>
+
+      <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <header class="mb-4">
+          <h1 class="text-[28px] leading-8 md:text-[30px] font-semibold">Historique des repas</h1>
+          <p class="text-sm text-textSecondary">Consultez vos repas enregistrés et leurs apports nutritionnels.</p>
+        </header>
+
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mt-4">
+          <div class="flex-1">
+            <div class="relative">
+              <div class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-textSecondary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"/></svg>
+              </div>
+              <input type="text" placeholder="Rechercher un repas..." class="w-full pl-9 pr-3 py-2 text-[14px] rounded-lg border border-[#E5E7EB] bg-white placeholder:text-textSecondary focus:outline-none focus:ring-2 focus:ring-[#22C55E]/20 focus:border-[#22C55E]" />
+            </div>
+          </div>
+
+          <div>
+            <select id="countries" class="inline-flex items-center gap-2 px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-lg bg-white outline-none cursor-pointer">
+                <option selected>Par semaine</option>
+                <option value="1">Semaine 1</option>
+                <option value="2">Semaine 2</option>
+                <option value="3">Semaine 3</option>
+                <option value="4">Semaine 4</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="mt-4 bg-white border border-[#E5E7EB] rounded-xl overflow-hidden">
+            <table class="w-full text-left">
+
+                <thead class="bg-gray-50 text-[13px] text-textSecondary">
+                <tr class="grid grid-cols-12">
+                    <th class="col-span-3 sm:col-span-3 py-3 pl-5 font-medium">Date</th>
+                    <th class="col-span-2 sm:col-span-2 py-3 font-medium">Photo</th>
+                    <th class="col-span-3 sm:col-span-3 py-3 font-medium">Nom du repas</th>
+                    <th class="col-span-2 sm:col-span-2 py-3 font-medium">Calories totales</th>
+                    <th class="col-span-2 sm:col-span-2 py-3 pr-5 text-right font-medium">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody class="divide-y divide-[#E5E7EB] text-[14px]">
+                <tr class="grid grid-cols-12 items-center">
+                    <td class="col-span-3 py-4 pl-5">12/02/2025</td>
+                    <td class="col-span-2 py-4">
+                    <img class="h-9 w-9 rounded-md object-cover" src="https://www.tasteofhome.com/wp-content/uploads/2025/04/Turkey-Club-Sandwich_EXPS_FT25_278726_EC_0408_5.jpg" alt="pizza">
+                    </td>
+                    <td class="col-span-3 py-4">Déjeuner</td>
+                    <td class="col-span-2 py-4">650 kcal</td>
+                    <td class="col-span-2 py-4 pr-5 text-right"><a href="#" class="text-[#22C55E]">Voir détails</a></td>
+                </tr>
+
+                <tr class="grid grid-cols-12 items-center">
+                    <td class="col-span-3 py-4 pl-5">11/02/2025</td>
+                    <td class="col-span-2 py-4">
+                    <img class="h-9 w-9 rounded-md object-cover" src="https://assets.afcdn.com/recipe/20250128/157770_w1024h576c1cx1130cy1023cxt0cyt0cxb2667cyb1500.webp" alt="crêpe">
+                    </td>
+                    <td class="col-span-3 py-4">Petit-déjeuner</td>
+                    <td class="col-span-2 py-4">420 kcal</td>
+                    <td class="col-span-2 py-4 pr-5 text-right"><a href="#" class="text-[#22C55E]">Voir détails</a></td>
+                </tr>
+
+                <tr class="grid grid-cols-12 items-center">
+                    <td class="col-span-3 py-4 pl-5">11/02/2025</td>
+                    <td class="col-span-2 py-4">
+                    <img class="h-9 w-9 rounded-md object-cover" src="https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=120&auto=format&fit=crop" alt="sandwich">
+                    </td>
+                    <td class="col-span-3 py-4">Diner</td>
+                    <td class="col-span-2 py-4">780 kcal</td>
+                    <td class="col-span-2 py-4 pr-5 text-right"><a href="#" class="text-[#22C55E]">Voir détails</a></td>
+                </tr>
+
+                <tr class="grid grid-cols-12 items-center">
+                    <td class="col-span-3 py-4 pl-5">10/02/2025</td>
+                    <td class="col-span-2 py-4">
+                    <img class="h-9 w-9 rounded-md object-cover" src="https://www.tasteofhome.com/wp-content/uploads/2025/04/Turkey-Club-Sandwich_EXPS_FT25_278726_EC_0408_5.jpg" alt="pizza">
+                    </td>
+                    <td class="col-span-3 py-4">Snack</td>
+                    <td class="col-span-2 py-4">180 kcal</td>
+                    <td class="col-span-2 py-4 pr-5 text-right"><a href="#" class="text-[#22C55E]">Voir détails</a></td>
+                </tr>
+
+                <tr class="grid grid-cols-12 items-center">
+                    <td class="col-span-3 py-4 pl-5">10/02/2025</td>
+                    <td class="col-span-2 py-4">
+                    <img class="h-9 w-9 rounded-md object-cover" src="https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=120&auto=format&fit=crop" alt="sandwich">
+                    </td>
+                    <td class="col-span-3 py-4">Déjeuner</td>
+                    <td class="col-span-2 py-4">720 kcal</td>
+                    <td class="col-span-2 py-4 pr-5 text-right"><a href="#" class="text-[#22C55E]">Voir détails</a></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="py-4 flex items-center justify-center gap-6 text-[13px] text-textSecondary">
+                <button class="p-1 rounded hover:bg-gray-100 cursor-pointer" aria-label="Précédent">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <span>Page 1 de 5</span>
+                <button class="p-1 rounded hover:bg-gray-100 cursor-pointer" aria-label="Suivant">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+
+        </div>
+
+
+      </section>
+    </main>
+  </div>
+</body>
+</html>
