@@ -52,3 +52,37 @@ export async function postAddRecommendation(req, res, next) {
 
 
 
+
+export async function postEditRecommendation(req , res , next ){
+
+    try {
+
+        const {id} = req.params;
+        const {description , calories , protein , ingredients , imageUrl , image_url} = req.body;
+        const finalImageUrl = image_url || imageUrl || null;
+
+
+        let ingParsed = [];
+        try {
+            ingParsed = ingredients ? JSON.parse(ingredients) : [];
+
+            if(!Array.isArray(ingParsed)) ingParsed = [];
+        } catch  {
+             ingParsed = [];
+        }
+
+        const updated = await Recommendation.update(id , {
+            description , 
+            calories : calories ? parseInt(calories, 10 ) : null ,
+            protein : protein ? parseInt (protein ,10 ): null ,
+            ingredients : ingParsed,
+            image_url : finalImageUrl
+        });
+
+        res.json(updated)
+        
+    } catch (e) {
+        next(e);
+    }
+
+}
