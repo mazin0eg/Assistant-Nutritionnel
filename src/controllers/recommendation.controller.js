@@ -22,28 +22,33 @@ export async function postAddRecommendation(req, res, next) {
             });
         }
 
-        const { goal, description, calories, protein, ingredients, image_url } = req.body;
+          const { goal, description, calories, protein, ingredients, imageUrl, image_url } = req.body;
 
-        let ingParsed = [];
-        try {
-            ingParsed = ingredients ? JSON.parse(ingredients) : [];
-            if (!Array.isArray(ingParsed)) ingParsed = [];
-        } catch {
-            ingParsed = [];
-        }
+            const finalImageUrl = image_url || imageUrl || null;
 
-        await Recommendation.create({
-            goal,
-            description,
-            calories: calories ? parseInt(calories, 10) : null,
-            protein: protein ? parseInt(protein, 10) : null,
-            ingredients: ingParsed,
-            imageUrl
-        });
+            let ingParsed = [];
+            try {
+                ingParsed = ingredients ? JSON.parse(ingredients) : [];
+                if (!Array.isArray(ingParsed)) ingParsed = [];
+            } catch {
+                ingParsed = [];
+            }
+
+            await Recommendation.create({
+                goal,
+                description,
+                calories: calories ? parseInt(calories, 10) : null,
+                protein: protein ? parseInt(protein, 10) : null,
+                ingredients: ingParsed,
+                image_url: finalImageUrl  
+            });
+
 
         res.redirect('/recommendations');
     } catch (e) {
         next(e);
     }
 }
+
+
 

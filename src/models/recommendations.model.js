@@ -17,15 +17,17 @@ export default class Recommendation {
         this.created_at = created_at;
     }
 
-    static async create({ goal, description, calories, protein, ingredients, image_url }) {
-        const ing = ingredients ? JSON.stringify(ingredients) : JSON.stringify([]);
-        const [res] = await db.execute(
-            `INSERT INTO recommendations (goal, description, calories, protein, ingredients, image_url)
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [goal, description, calories || null, protein || null, ing, image_url || null]
-        );
-        return await Recommendation.findById(res.insertId);
-    }
+  static async create({ goal, description, calories, protein, ingredients, image_url }) {
+    const ing = ingredients ? JSON.stringify(ingredients) : JSON.stringify([]);
+
+    const [res] = await db.execute(
+        `INSERT INTO recommendations (goal, description, calories, protein, ingredients, image_url)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [goal, description, calories || null, protein || null, ing, image_url || null]
+    );
+
+    return await Recommendation.findById(res.insertId);
+}
 
     static async findById(id) {
         const [rows] = await db.execute(
@@ -42,12 +44,6 @@ export default class Recommendation {
         return rows.map(r => new Recommendation(r));
     }
 
-    static async findByGoal(goal) {
-        const [rows] = await db.execute(
-            `SELECT * FROM recommendations WHERE goal = ? ORDER BY created_at DESC`,
-            [goal]
-        );
-        return rows.map(r => new Recommendation(r));
-    }
+
 
 }
