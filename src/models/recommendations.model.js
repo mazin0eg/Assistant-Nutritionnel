@@ -59,7 +59,7 @@ export default class Recommendation {
         await db.execute(
 
             `UPDATE recommendations 
-            SET decsription = ? , calories = ? , protein = ? , ingredients = ? , image_url = ?
+            SET description = ? , calories = ? , protein = ? , ingredients = ? , image_url = ?
             
              WHERE id = ?
             `,

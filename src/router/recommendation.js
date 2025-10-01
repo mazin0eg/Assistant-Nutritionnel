@@ -18,6 +18,6 @@ const commonValidation = [
 
 router.post('/add', commonValidation, postAddRecommendation);
 // router.post('/delete/:id', postDeleteRecommendation);
-// router.post('/edit/:id', commonValidation, postEditRecommendation);
+router.put('/edit/:id', commonValidation, postEditRecommendation);
 
 export default router;
