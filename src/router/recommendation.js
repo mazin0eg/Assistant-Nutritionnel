@@ -1,24 +1,20 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import {
-  getRecommendationsPage,
-  postAddRecommendation,
-  postDeleteRecommendation,
-  postEditRecommendation
-} from '../controllers/recommendation.controller.js';
+import { getUserRecommendations, postAddRecommendation, postEditRecommendation, postDeleteRecommendation } from "../controllers/recommendation.controller.js";
+import auth from "../middlewares/auth.js";
 
 
 import { uploadImage } from "../middlewares/upload.js";
 const router = Router();
 
-router.get('/', getRecommendationsPage);
+router.get('/', getUserRecommendations);
 
 const commonValidation = [
   body('goal').notEmpty().withMessage('Le goal est requis'),
   body('description').notEmpty().withMessage('La description est requise')
 ];
 
-router.get("/", getRecommendationsPage);
+router.get("/my-recommendations", auth, getUserRecommendations);
 
 router.post("/add", uploadImage.single("image"), postAddRecommendation);
 

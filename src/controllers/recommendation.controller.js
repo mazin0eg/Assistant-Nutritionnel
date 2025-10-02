@@ -2,13 +2,21 @@ import Recommendation from "../models/recommendations.model.js";
 import { validationResult } from "express-validator";
 
 
-export async function getRecommendationsPage(req, res, next) {
-    try {
-        const recs = await Recommendation.findAll();
-        res.json(recs);
-    } catch (e) {
-        next(e);
+
+export async function getUserRecommendations(req, res, next) {
+  try {
+    const userGoal = req.session.user.goal;
+
+    if (!userGoal) {
+      return res.status(400).json({ error: "L'utilisateur n'a pas encore de goal défini." });
     }
+
+    const recs = await Recommendation.findByGoal(userGoal);
+
+    res.json(recs);
+  } catch (e) {
+    next(e);
+  }
 }
 
 
