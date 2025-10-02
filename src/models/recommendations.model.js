@@ -33,6 +33,16 @@ export default class Recommendation {
     return rows.map(r => new Recommendation(r));
   }
 
+
+static async findByGoal(goal) {
+  const [rows] = await db.execute(
+    `SELECT * FROM recommendations WHERE goal = ? ORDER BY created_at DESC`,
+    [goal]
+  );
+  return rows.map(r => new Recommendation(r));
+}
+
+
   static async update(id, { description, calories, protein, ingredients, image_url }) {
     const ing = ingredients ? JSON.stringify(ingredients) : JSON.stringify([]);
     await db.execute(
