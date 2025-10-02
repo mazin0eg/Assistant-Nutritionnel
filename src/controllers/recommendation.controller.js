@@ -15,82 +15,55 @@ export async function getRecommendationsPage(req, res, next) {
 export async function postAddRecommendation(req, res, next) {
     try {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array(),
-                old: req.body
-            });
-        }
+        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array(), old: req.body });
 
-        const { goal, description, calories, protein, ingredients, imageUrl, image_url } = req.body;
-
-        const allowedGoals = ['ATHLETE', 'PATIENT', 'LOSE_WEIGHT', 'GAIN_WEIGHT'];
-
-        if (!allowedGoals.includes(goal)) {
-            return res.status(400).json({
-                errors: [{ msg: `Le goal doit être l'une des valeurs suivantes: ${allowedGoals.join(', ')}` }],
-                old: req.body
-            });
-        }
-
-        const finalImageUrl = image_url || imageUrl || null;
+        const { goal, description, calories, protein, ingredients, imageUrl } = req.body;
+        const allowedGoals = ["ATHLETE", "PATIENT", "LOSE_WEIGHT", "GAIN_WEIGHT"];
+        if (!allowedGoals.includes(goal)) return res.status(400).json({
+            errors: [{ msg: `Le goal doit être parmi: ${allowedGoals.join(", ")}` }],
+            old: req.body
+        });
 
         let ingParsed = [];
         if (ingredients) {
-            if (typeof ingredients === 'string') {
-                try {
-                    ingParsed = JSON.parse(ingredients);
-                    if (!Array.isArray(ingParsed)) ingParsed = [];
-                } catch {
-                    ingParsed = [];
-                }
-            } else if (Array.isArray(ingredients)) {
-                ingParsed = ingredients;
-            }
+            try {
+                ingParsed = typeof ingredients === "string" ? JSON.parse(ingredients) : ingredients;
+                if (!Array.isArray(ingParsed)) ingParsed = [];
+            } catch { ingParsed = []; }
         }
 
-        await Recommendation.create({
-            goal,
-            description,
-            calories: calories ? parseInt(calories, 10) : null,
-            protein: protein ? parseInt(protein, 10) : null,
-            ingredients: ingParsed,
-            image_url: finalImageUrl
-        });
+const finalImageUrl = req.file ? `/uploads/${req.file.filename}` : (imageUrl || null);
 
-        res.redirect('/recommendations');
-        // res.json(recs);
+await Recommendation.create({
+    goal,
+    description,
+    calories: calories ? parseInt(calories, 10) : null,
+    protein: protein ? parseInt(protein, 10) : null,
+    ingredients: ingParsed,
+    image_url: finalImageUrl  
+});
 
 
-    } catch (e) {
-        next(e);
-    }
+        res.redirect("/recommendations");
+    } catch (e) { next(e); }
 }
-
 
 export async function postEditRecommendation(req, res, next) {
     try {
         const { id } = req.params;
-        const { description, calories, protein, ingredients, imageUrl, image_url } = req.body;
-        const finalImageUrl = image_url || imageUrl || null;
+        const { description, calories, protein, ingredients, imageUrl } = req.body;
 
         let ingParsed = [];
+        if (ingredients) {
+            try {
+                ingParsed = typeof ingredients === "string" ? JSON.parse(ingredients) : ingredients;
+                if (!Array.isArray(ingParsed)) ingParsed = [];
+            } catch { ingParsed = []; }
+        }
 
-            if (ingredients) {
-                if (typeof ingredients === 'string') {
-                    try {
-                        ingParsed = JSON.parse(ingredients);
-                        if (!Array.isArray(ingParsed)) ingParsed = [];
-                    } catch {
-                        ingParsed = [];
-                    }
-                } 
-                else if (Array.isArray(ingredients)) {
-                    ingParsed = ingredients;
-                }
-            }
+        const finalImageUrl = req.file ? `/uploads/${req.file.filename}` : (imageUrl || null);
 
-                    const updated = await Recommendation.update(id, {
+        const updated = await Recommendation.update(id, {
             description,
             calories: calories ? parseInt(calories, 10) : null,
             protein: protein ? parseInt(protein, 10) : null,
@@ -99,10 +72,7 @@ export async function postEditRecommendation(req, res, next) {
         });
 
         res.json(updated);
-
-    } catch (e) {
-        next(e);
-    }
+    } catch (e) { next(e); }
 }
 
 export async function postDeleteRecommendation(req, res, next) {

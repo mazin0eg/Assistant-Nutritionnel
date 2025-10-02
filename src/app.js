@@ -20,7 +20,6 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.json());
 app.use("/ai", aiRoutes);
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 const newLocal = '';
 app.use('/assets', express.static("./src/assets/"));
 
@@ -47,6 +46,7 @@ app.use((err, req, res, _next) => {
 });
 
 app.use('/recommendations', recommendationRoutes);
+app.use("/uploads", express.static(path.join(process.cwd(), "public/uploads")));
 
 
 const PORT = process.env.PORT || 3000;
