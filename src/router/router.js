@@ -8,7 +8,13 @@ r.get('/', auth, (req, res) => {
 });
 
 r.get('/analyse', auth, (req, res) => {
-  res.render('meals/meal-analyse.ejs');
+  if (req.session.returnedQuery ) {
+    res.render("meals/meal-analyse.ejs", {query : req.session.returnedQuery });
+  }else{
+    res.render(`meals/meal-analyse.ejs`,{query : null});
+  }
+ 
+  
 });
 
 export default r;
