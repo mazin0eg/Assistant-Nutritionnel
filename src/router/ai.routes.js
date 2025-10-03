@@ -1,24 +1,13 @@
-import { Router } from "express";
+import express from "express";
 import multer from "multer";
-import { analyzeMeal } from "../controllers/meal.controller.js";
+import { analyzeMeal, getMealHistory } from "../controllers/meal.controller.js";
+import auth from "../middlewares/auth.js";
 
-const router = Router();
-
+const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
+router.post("/analyze", auth, upload.single("mealImage"), analyzeMeal, (req, res) => {
+  res.redirect("/analyse");
+});
 
-// router.post("/analyze", upload.single("mealImage"), analyzeMeal , (res , req)=>{
-//    res.redirect("/analyse");
-// })
-
-router.post(
-  "/analyze",
-  upload.single("mealImage"),
-  analyzeMeal,              // controller logic
-  (req, res) => {           // response handler
-    res.redirect("/analyse");
-  }
-);
-
-
-
+router.get("/historique", auth, getMealHistory);
 export default router;

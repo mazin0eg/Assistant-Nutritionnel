@@ -11,10 +11,13 @@ function toLayoutRelativePath(viewName) {
   return viewName.startsWith('../') ? viewName : `../${viewName}`;
 }
 
-export function renderInLayout(res, viewName, props = {}) {
-  if (!allowedViews.has(viewName)) {
-    return res.status(404).send('Page non trouvée');
-  }
-  const content = toLayoutRelativePath(viewName);
-  return res.render('layouts/main.ejs', { content, ...props });
+export function renderInLayout(req, res, next) {
+  res.renderInLayout = function(viewName, props = {}) {
+    if (!allowedViews.has(viewName)) {
+      return res.status(404).send('Page non trouvée');
+    }
+    const content = toLayoutRelativePath(viewName);
+    return res.render('layouts/main.ejs', { content, ...props });
+  };
+  next();
 }

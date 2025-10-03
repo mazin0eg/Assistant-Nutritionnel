@@ -55,56 +55,33 @@
                 </thead>
 
                 <tbody class="divide-y divide-[#E5E7EB] text-[14px]">
-                <tr class="grid grid-cols-12 items-center">
-                    <td class="col-span-3 py-4 pl-5">12/02/2025</td>
-                    <td class="col-span-2 py-4">
-                    <img class="h-9 w-9 rounded-md object-cover" src="https://www.tasteofhome.com/wp-content/uploads/2025/04/Turkey-Club-Sandwich_EXPS_FT25_278726_EC_0408_5.jpg" alt="pizza">
-                    </td>
-                    <td class="col-span-3 py-4">Déjeuner</td>
-                    <td class="col-span-2 py-4">650 kcal</td>
-                    <td class="col-span-2 py-4 pr-5 text-right"><a href="#" class="text-[#22C55E]">Voir détails</a></td>
-                </tr>
+<% if (meals && meals.length > 0) { %>
+  <% meals.forEach(meal => { %>
+    <tr class="grid grid-cols-12 items-center">
+      <td class="col-span-3 py-4 pl-5"><%= new Date(meal.created_at).toLocaleDateString() %></td>
+      <td class="col-span-2 py-4">
+        <img class="h-9 w-9 rounded-md object-cover" src="data:<%= meal.mime_type %>;base64,<%= meal.image_base64 %>" alt="Repas" />
+      </td>
+      <td class="col-span-3 py-4"><%= meal.name || "Repas" %></td>
+      <td class="col-span-2 py-4"><%= meal.calories %> kcal</td>
+      <td class="col-span-2 py-4 pr-5 text-right"><a href="#" class="text-[#22C55E]">Voir détails</a></td>
+    </tr>
+  <% }) %>
+<% } else { %>
+  <tr class="grid grid-cols-12">
+    <td colspan="12" class="col-span-12 text-center py-8 text-textSecondary">
+      <div class="flex flex-col items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <p>Aucun repas enregistré pour le moment.</p>
+        <a href="/analyse" class="text-[#22C55E] hover:underline">Analyser votre premier repas →</a>
+      </div>
+    </td>
+  </tr>
+<% } %>
+</tbody>
 
-                <tr class="grid grid-cols-12 items-center">
-                    <td class="col-span-3 py-4 pl-5">11/02/2025</td>
-                    <td class="col-span-2 py-4">
-                    <img class="h-9 w-9 rounded-md object-cover" src="https://assets.afcdn.com/recipe/20250128/157770_w1024h576c1cx1130cy1023cxt0cyt0cxb2667cyb1500.webp" alt="crêpe">
-                    </td>
-                    <td class="col-span-3 py-4">Petit-déjeuner</td>
-                    <td class="col-span-2 py-4">420 kcal</td>
-                    <td class="col-span-2 py-4 pr-5 text-right"><a href="#" class="text-[#22C55E]">Voir détails</a></td>
-                </tr>
-
-                <tr class="grid grid-cols-12 items-center">
-                    <td class="col-span-3 py-4 pl-5">11/02/2025</td>
-                    <td class="col-span-2 py-4">
-                    <img class="h-9 w-9 rounded-md object-cover" src="https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=120&auto=format&fit=crop" alt="sandwich">
-                    </td>
-                    <td class="col-span-3 py-4">Diner</td>
-                    <td class="col-span-2 py-4">780 kcal</td>
-                    <td class="col-span-2 py-4 pr-5 text-right"><a href="#" class="text-[#22C55E]">Voir détails</a></td>
-                </tr>
-
-                <tr class="grid grid-cols-12 items-center">
-                    <td class="col-span-3 py-4 pl-5">10/02/2025</td>
-                    <td class="col-span-2 py-4">
-                    <img class="h-9 w-9 rounded-md object-cover" src="https://www.tasteofhome.com/wp-content/uploads/2025/04/Turkey-Club-Sandwich_EXPS_FT25_278726_EC_0408_5.jpg" alt="pizza">
-                    </td>
-                    <td class="col-span-3 py-4">Snack</td>
-                    <td class="col-span-2 py-4">180 kcal</td>
-                    <td class="col-span-2 py-4 pr-5 text-right"><a href="#" class="text-[#22C55E]">Voir détails</a></td>
-                </tr>
-
-                <tr class="grid grid-cols-12 items-center">
-                    <td class="col-span-3 py-4 pl-5">10/02/2025</td>
-                    <td class="col-span-2 py-4">
-                    <img class="h-9 w-9 rounded-md object-cover" src="https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=120&auto=format&fit=crop" alt="sandwich">
-                    </td>
-                    <td class="col-span-3 py-4">Déjeuner</td>
-                    <td class="col-span-2 py-4">720 kcal</td>
-                    <td class="col-span-2 py-4 pr-5 text-right"><a href="#" class="text-[#22C55E]">Voir détails</a></td>
-                </tr>
-                </tbody>
             </table>
 
             <div class="py-4 flex items-center justify-center gap-6 text-[13px] text-textSecondary">

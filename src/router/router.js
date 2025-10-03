@@ -1,28 +1,21 @@
-import { Router } from 'express';
-import auth from '../middlewares/auth.js';
-import { renderInLayout } from '../middlewares/renderInLayout.js';
+import express from "express";
+import multer from "multer";
+import { renderInLayout } from "../middlewares/renderInLayout.js";
+import auth from "../middlewares/auth.js";
+import dashboardController from "../controllers/dashboard.controller.js";
+import mealsController from "../controllers/meals.controller.js";
+import { analyzeMeal } from "../controllers/meal.controller.js";
 
-const r = Router();
+const router = express.Router();
+router.use(renderInLayout);
 
-r.get('/', auth, (req, res) => {
-  renderInLayout(res, 'index', { user: req.session.user });
-});
+const upload = multer({ storage: multer.memoryStorage() });
 
-r.get('/analyse', auth, (req, res) => {
-  const query = req.session.returnedQuery || null;
-  renderInLayout(res, 'meals/meal-analyse', { user: req.session.user, query });
-});
+router.get("/", auth, dashboardController.showDashboard.bind(dashboardController));
+router.get("/analyse", auth, mealsController.showAnalysisPage.bind(mealsController));
+router.get("/historique", auth, mealsController.showHistory.bind(mealsController));
+router.get("/recommandation", auth, mealsController.showRecommendations.bind(mealsController));
+router.get("/details", auth, mealsController.showDetails.bind(mealsController));
+router.post("/analyze", auth, upload.single("mealImage"), analyzeMeal, mealsController.showAnalysisPage.bind(mealsController));
 
-r.get('/historique', auth, (req, res) => {
-  renderInLayout(res, 'meals/mon-historique', { user: req.session.user });
-});
-
-r.get('/recommandation', auth, (req, res) => {
-  renderInLayout(res, 'meals/meal-recommandation', { user: req.session.user });
-});
-
-r.get('/details', auth, (req, res) => {
-  renderInLayout(res, 'meals/meal-details', { user: req.session.user });
-}); 
-
-export default r;
+export default router;
