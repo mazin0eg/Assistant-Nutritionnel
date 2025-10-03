@@ -29,8 +29,8 @@
                 </svg>
               </div>
               <div>
-                <div class="text-[20px] font-semibold leading-none">1,200</div>
-                <div class="text-[12px] text-[#6B7280]">Kcal</div>
+                <div class="text-[20px] font-semibold leading-none"><%= dailyTotals ? dailyTotals.calories : 0 %></div>
+                <div class="text-[12px] text-[#6B7280]">Kcal aujourd'hui</div>
               </div>
             </div>
             <div class="border border-[#E5E7EB] rounded-xl p-4 flex items-center gap-3">
@@ -40,7 +40,7 @@
                 </svg>
               </div>
               <div>
-                <div class="text-[20px] font-semibold leading-none">140g</div>
+                <div class="text-[20px] font-semibold leading-none"><%= dailyTotals ? Math.round(dailyTotals.carbs) : 0 %>g</div>
                 <div class="text-[12px] text-[#6B7280]">Carbs</div>
               </div>
             </div>
@@ -51,7 +51,7 @@
                 </svg>
               </div>
               <div>
-                <div class="text-[20px] font-semibold leading-none">95g</div>
+                <div class="text-[20px] font-semibold leading-none"><%= dailyTotals ? Math.round(dailyTotals.protein) : 0 %>g</div>
                 <div class="text-[12px] text-[#6B7280]">Protein</div>
               </div>
             </div>
@@ -63,7 +63,7 @@
                 </svg>
               </div>
               <div>
-                <div class="text-[20px] font-semibold leading-none">45g</div>
+                <div class="text-[20px] font-semibold leading-none"><%= dailyTotals ? Math.round(dailyTotals.fats) : 0 %>g</div>
                 <div class="text-[12px] text-[#6B7280]">Fat</div>
               </div>
             </div>
@@ -85,43 +85,68 @@
         </div>
 
         <div class="mt-5 bg-white border border-[#E5E7EB] rounded-xl">
-          <div class="p-5">
-            <h3 class="font-medium text-[15px] mb-2">Historique rapide</h3>
+          <div class="p-5 flex justify-between items-center">
+            <h3 class="font-medium text-[15px] mb-0">Historique rapide</h3>
+            <a href="/historique" class="text-[13px] text-[#22C55E] hover:underline">Voir tout →</a>
           </div>
           <div>
-            <div class="px-5 py-3 flex items-center gap-3 border-t border-[#E5E7EB]">
-              <img class="h-9 w-9 rounded-md object-cover" src="https://assets.surlatable.com/m/15a89c2d9c6c1345/72_dpi_webp-REC-283110_Pizza.jpg" alt="pizza"/>
+<% if (recentMeals && recentMeals.length > 0) { %>
+  <% recentMeals.forEach((meal, index) => { %>
+            <div class="px-5 py-3 flex items-center gap-3 <%= index === 0 ? 'border-t' : 'border-t' %> border-[#E5E7EB]">
+              <% if (meal.image_base64 && meal.mime_type) { %>
+                <img class="h-9 w-9 rounded-md object-cover" src="data:<%= meal.mime_type %>;base64,<%= meal.image_base64 %>" alt="repas"/>
+              <% } else { %>
+                <div class="h-9 w-9 rounded-md bg-gray-100 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 110 2h-1v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6H3a1 1 0 110-2h4zM6 6v14h12V6H6zm3-2V3h6v1H9z" />
+                  </svg>
+                </div>
+              <% } %>
               <div class="flex-1 min-w-0">
-                <div class="text-[14px] leading-tight">Pizza</div>
-                <div class="text-[12px] text-[#6B7280] leading-tight">Aujourd'hui, 12:30</div>
+                <div class="text-[14px] leading-tight"><%= meal.name || 'Repas' %></div>
+                <div class="text-[12px] text-[#6B7280] leading-tight">
+                  <% 
+                    const mealDate = new Date(meal.created_at);
+                    const today = new Date();
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    
+                    let dateLabel;
+                    if (mealDate.toDateString() === today.toDateString()) {
+                      dateLabel = "Aujourd'hui";
+                    } else if (mealDate.toDateString() === yesterday.toDateString()) {
+                      dateLabel = "Hier";
+                    } else {
+                      dateLabel = mealDate.toLocaleDateString('fr-FR');
+                    }
+                    
+                    const timeLabel = mealDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                  %>
+                  <%= dateLabel %>, <%= timeLabel %>
+                </div>
               </div>
               <div class="text-right">
-                <div class="text-[13px] font-medium">1450 kcal</div>
-                <a href="#" class="text-[12px] text-[#22C55E]">Voir</a>
+                <div class="text-[13px] font-medium"><%= meal.calories || 0 %> kcal</div>
+                <a href="/historique" class="text-[12px] text-[#22C55E]">Voir</a>
               </div>
             </div>
-            <div class="px-5 py-3 flex items-center gap-3 border-t border-[#E5E7EB]">
-              <img class="h-9 w-9 rounded-md object-cover" src="https://media.ccmbg.com/tc/4113588060/912893" alt="crêpe"/>
-              <div class="flex-1 min-w-0">
-                <div class="text-[14px] leading-tight">Crepe Nutella</div>
-                <div class="text-[12px] text-[#6B7280] leading-tight">Aujourd'hui, 08:00</div>
+  <% }) %>
+<% } else { %>
+            <div class="px-5 py-8 text-center border-t border-[#E5E7EB]">
+              <div class="text-gray-400 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
               </div>
-              <div class="text-right">
-                <div class="text-[13px] font-medium">1020 kcal</div>
-                <a href="#" class="text-[12px] text-[#22C55E]">Voir</a>
-              </div>
+              <p class="text-[14px] text-[#6B7280] mb-3">Aucun repas analysé pour le moment</p>
+              <a href="/analyse" class="inline-flex items-center px-3 py-2 text-sm font-medium text-[#22C55E] bg-green-50 rounded-md hover:bg-green-100 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Analyser votre premier repas
+              </a>
             </div>
-            <div class="px-5 py-3 flex items-center gap-3 border-t border-[#E5E7EB]">
-              <img class="h-9 w-9 rounded-md object-cover" src="https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=120&auto=format&fit=crop" alt="sandwich"/>
-              <div class="flex-1 min-w-0">
-                <div class="text-[14px] leading-tight">Sandwich</div>
-                <div class="text-[12px] text-[#6B7280] leading-tight">Hier, 19:45</div>
-              </div>
-              <div class="text-right">
-                <div class="text-[13px] font-medium">780 kcal</div>
-                <a href="#" class="text-[12px] text-[#22C55E]">Voir</a>
-              </div>
-            </div>
+<% } %>
           </div>
         </div>
 

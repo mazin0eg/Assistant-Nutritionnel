@@ -20,12 +20,20 @@ export async function analyzeMealAI(imageBase64, mimeType) {
 
   const prompt = `
     You are a nutrition analysis system.
-    Analyze the meal in the image and output ONLY valid JSON:
-    {
-      "calories": number,
-      "protein": number,
-      "ingredients": [string]
-    }
+Analyze the meal in the image and output ONLY valid JSON in the following structure:
+
+{
+  "ingredients": [
+    { "name": string, "quantity": string, "calories": number }
+  ],
+  "totals": {
+    "calories": number,
+    "protein": string,
+    "carbs": string,
+    "fats": string
+  }
+}
+
   `;
 
   console.log("Sending request to Gemini...");
