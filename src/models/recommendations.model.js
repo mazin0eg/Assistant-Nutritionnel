@@ -7,8 +7,23 @@ export default class Recommendation {
     this.description = description;
     this.calories = calories;
     this.protein = protein;
-    try { this.ingredients = ingredients ? JSON.parse(ingredients) : []; } 
-    catch { this.ingredients = []; }
+    
+    if (ingredients) {
+      if (typeof ingredients === 'string') {
+        try {
+          this.ingredients = JSON.parse(ingredients);
+        } catch {
+          this.ingredients = [];
+        }
+      } else if (Array.isArray(ingredients)) {
+        this.ingredients = ingredients;
+      } else {
+        this.ingredients = [];
+      }
+    } else {
+      this.ingredients = [];
+    }
+    
     this.image_url = image_url;
     this.created_at = created_at;
   }
