@@ -1,22 +1,27 @@
 import { Router } from 'express';
 import auth from '../middlewares/auth.js';
+import { renderInLayout } from '../middlewares/renderInLayout.js';
 
 const r = Router();
 
 r.get('/', auth, (req, res) => {
-  res.render('index.ejs', { user: req.session.user });
+  renderInLayout(res, 'index', { user: req.session.user });
 });
 
 r.get('/analyse', auth, (req, res) => {
-  res.render('meals/meal-analyse.ejs');
+  renderInLayout(res, 'meals/meal-analyse', { user: req.session.user });
 });
 
 r.get('/historique', auth, (req, res) => {
-  res.render('meals/mon-historique.ejs');
+  renderInLayout(res, 'meals/mon-historique', { user: req.session.user });
 });
 
-r.get('/layout', auth, (req, res) => {
-  res.render('layouts/main.ejs');
+r.get('/recommandation', auth, (req, res) => {
+  renderInLayout(res, 'meals/meal-recommandation', { user:req.session.user});
 });
+
+r.get('/details', auth, (req, res) => {
+  renderInLayout(res, 'meals/meal-details', { user:req.session.user});
+}); 
 
 export default r;
