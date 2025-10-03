@@ -9,7 +9,8 @@ r.get('/', auth, (req, res) => {
 });
 
 r.get('/analyse', auth, (req, res) => {
-  renderInLayout(res, 'meals/meal-analyse', { user: req.session.user });
+  const query = req.session.returnedQuery || null;
+  renderInLayout(res, 'meals/meal-analyse', { user: req.session.user, query });
 });
 
 r.get('/historique', auth, (req, res) => {
@@ -17,11 +18,11 @@ r.get('/historique', auth, (req, res) => {
 });
 
 r.get('/recommandation', auth, (req, res) => {
-  renderInLayout(res, 'meals/meal-recommandation', { user:req.session.user});
+  renderInLayout(res, 'meals/meal-recommandation', { user: req.session.user });
 });
 
 r.get('/details', auth, (req, res) => {
-  renderInLayout(res, 'meals/meal-details', { user:req.session.user});
+  renderInLayout(res, 'meals/meal-details', { user: req.session.user });
 }); 
 
 export default r;

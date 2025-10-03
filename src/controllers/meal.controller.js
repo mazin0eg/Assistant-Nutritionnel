@@ -1,7 +1,8 @@
+// controllers/meal.controller.js
 import { analyzeMealAI } from "../services/gemini.service.js";
 import { saveMeal } from "../models/meal.model.js";
 
-export async function analyzeMeal(req, res) {
+export async function analyzeMeal(req, res, next) {
   try {
     console.log("Incoming file:", req.file);
 
@@ -11,7 +12,7 @@ export async function analyzeMeal(req, res) {
 
     const imageBase64 = req.file.buffer.toString("base64");
     const mimeType = req.file.mimetype;
-    const userId = req.body.userId || null; 
+    const userId = req.body.userId || null;
 
     console.log("Base64 length:", imageBase64.length);
     console.log("MimeType:", mimeType);
@@ -22,10 +23,12 @@ export async function analyzeMeal(req, res) {
     await saveMeal(userId, imageBase64, mimeType, analysis);
     console.log("Meal saved in DB");
 
-    res.json(analysis);
+    req.session.returnedQuery = JSON.stringify(analysis);
+
+    // instead of res.redirect here 👇
+    next(); // pass control to router
   } catch (err) {
     console.error("Error in analyzeMeal:", err.message);
-    res.status(500).json({ error: "Server error", details: err.message });
+    next(err); // let Express handle errors
   }
 }
-

@@ -8,6 +8,15 @@ import aiRoutes from "./router/ai.routes.js";
 
 const app = express();
 
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'dev-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,       
+  }
+}));
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
@@ -20,15 +29,7 @@ const newLocal = '';
 app.use('/assets', express.static("./src/assets/"));
 
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'dev-secret',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,       
-    maxAge: 1000 * 60 * 60 * 24
-  }
-}));
+
 
 app.set('view engine', 'ejs');
 app.set('views', './src/view');
