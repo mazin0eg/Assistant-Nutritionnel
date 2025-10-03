@@ -18,133 +18,80 @@
           <p class="text-[#6B7280] text-sm">Découvrez des repas adaptés à votre objectif nutritionnel.</p>
         </header>
 
-        <div class="mt-6 bg-white border border-[#E5E7EB] rounded-xl shadow-card">
-          <div class="p-6 sm:p-8">
-            <h2 class="font-semibold text-[16px] mb-4">Pizza</h2>
+        <% if (recommendations && recommendations.length > 0) { %>
+          <% recommendations.forEach(function(recommendation) { %>
+            <div class="mt-6 bg-white border border-[#E5E7EB] rounded-xl shadow-card">
+              <div class="p-6 sm:p-8">
+                <div class="flex items-start gap-4 mb-4">
+                  <% if (recommendation.image_url) { %>
+                    <img src="<%= recommendation.image_url %>" alt="<%= recommendation.description %>" class="w-20 h-20 object-cover rounded-lg">
+                  <% } %>
+                  <div class="flex-1">
+                    <h2 class="font-semibold text-[16px] mb-2"><%= recommendation.description %></h2>
+                    <p class="text-[#6B7280] text-sm">Objectif: <%= recommendation.goal %></p>
+                  </div>
+                </div>
 
-            <div class="overflow-hidden border border-[#E5E7EB] rounded-lg">
-              <table class="w-full border-collapse">
-                <thead class="bg-gray-50 text-[13px] text-[#6B7280]">
-                  <tr class="grid grid-cols-12">
-                    <th class="col-span-6 sm:col-span-6 py-3 pl-4 text-left">Aliments</th>
-                    <th class="col-span-3 sm:col-span-3 py-3 text-left">Quantité</th>
-                    <th class="col-span-3 sm:col-span-3 py-3 text-left">Calories</th>
-                  </tr>
-                </thead>
-                <tbody class="text-[14px]">
+                <% if (recommendation.ingredients && recommendation.ingredients.length > 0) { %>
+                  <div class="overflow-hidden border border-[#E5E7EB] rounded-lg">
+                    <table class="w-full border-collapse">
+                      <thead class="bg-gray-50 text-[13px] text-[#6B7280]">
+                        <tr class="grid grid-cols-12">
+                          <th class="col-span-6 sm:col-span-6 py-3 pl-4 text-left">Ingrédients</th>
+                          <th class="col-span-3 sm:col-span-3 py-3 text-left">Quantité</th>
+                          <th class="col-span-3 sm:col-span-3 py-3 text-left">Calories</th>
+                        </tr>
+                      </thead>
+                      <tbody class="text-[14px]">
+                        <% recommendation.ingredients.forEach(function(ingredient, index) { %>
+                          <tr class="grid grid-cols-12 <%= index === 0 ? 'items-center' : '' %>">
+                            <td class="col-span-6 py-3 pl-4 border-t border-[#E5E7EB]"><%= ingredient.name || ingredient %></td>
+                            <td class="col-span-3 py-3 border-t border-[#E5E7EB]"><%= ingredient.quantity || '-' %></td>
+                            <td class="col-span-3 py-3 border-t border-[#E5E7EB]"><%= ingredient.calories || '-' %></td>
+                          </tr>
+                        <% }); %>
+                      </tbody>
+                    </table>
+                  </div>
+                <% } %>
 
-                  <tr class="grid grid-cols-12 items-center">
-                    <td class="col-span-6 py-3 pl-4 border-t border-[#E5E7EB]">Poulet</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">150g</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">350 kcal</td>
-                  </tr>
+                <div class="mt-5 grid grid-cols-2 gap-4 text-center text-[13px]">
+                  <% if (recommendation.calories) { %>
+                    <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
+                      <div class="text-[20px] font-semibold leading-none"><%= recommendation.calories %></div>
+                      <div class="text-[#6B7280] mt-1">kcal Total</div>
+                    </div>
+                  <% } %>
+                  <% if (recommendation.protein) { %>
+                    <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
+                      <div class="text-[20px] font-semibold leading-none text-[#22C55E]"><%= recommendation.protein %>g</div>
+                      <div class="text-[#6B7280] mt-1">Protéines</div>
+                    </div>
+                  <% } %>
+                </div>
 
-                  <tr class="grid grid-cols-12">
-                    <td class="col-span-6 py-3 pl-4 border-t border-[#E5E7EB]">Riz</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">250g</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">350 kcal</td>
-                  </tr>
-
-                  <tr class="grid grid-cols-12">
-                    <td class="col-span-6 py-3 pl-4 border-t border-[#E5E7EB]">Brocoli</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">120g</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">150 kcal</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-
-            <div class="mt-5 grid grid-cols-4 gap-4 text-center text-[13px]">
-              <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
-                <div class="text-[20px] font-semibold leading-none">850</div>
-                <div class="text-[#6B7280] mt-1">kcal Total</div>
-              </div>
-              <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
-                <div class="text-[20px] font-semibold leading-none text-[#22C55E]">55g</div>
-                <div class="text-[#6B7280] mt-1">Protéines</div>
-              </div>
-              <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
-                <div class="text-[20px] font-semibold leading-none text-orange-500">60g</div>
-                <div class="text-[#6B7280] mt-1">Glucides</div>
-              </div>
-              <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
-                <div class="text-[20px] font-semibold leading-none text-orange-500">20g</div>
-                <div class="text-[#6B7280] mt-1">Lipides</div>
-              </div>
-            </div>
-
-            <div class="mt-5">
-              <a href="">
-                <button class="w-full bg-[#22C55E] hover:bg-[#22C55E]Dark text-white font-medium py-3 rounded-md cursor-pointer">Voir les détails</button>
-              </a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="mt-6 bg-white border border-[#E5E7EB] rounded-xl shadow-card">
-          <div class="p-6 sm:p-8">
-            <h2 class="font-semibold text-[16px] mb-4">Pizza</h2>
-
-            <div class="overflow-hidden border border-[#E5E7EB] rounded-lg">
-              <table class="w-full border-collapse">
-                <thead class="bg-gray-50 text-[13px] text-[#6B7280]">
-                  <tr class="grid grid-cols-12">
-                    <th class="col-span-6 sm:col-span-6 py-3 pl-4 text-left">Aliments</th>
-                    <th class="col-span-3 sm:col-span-3 py-3 text-left">Quantité</th>
-                    <th class="col-span-3 sm:col-span-3 py-3 text-left">Calories</th>
-                  </tr>
-                </thead>
-                <tbody class="text-[14px]">
-
-                  <tr class="grid grid-cols-12 items-center">
-                    <td class="col-span-6 py-3 pl-4 border-t border-[#E5E7EB]">Poulet</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">150g</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">350 kcal</td>
-                  </tr>
-
-                  <tr class="grid grid-cols-12">
-                    <td class="col-span-6 py-3 pl-4 border-t border-[#E5E7EB]">Riz</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">250g</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">350 kcal</td>
-                  </tr>
-
-                  <tr class="grid grid-cols-12">
-                    <td class="col-span-6 py-3 pl-4 border-t border-[#E5E7EB]">Brocoli</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">120g</td>
-                    <td class="col-span-3 py-3 border-t border-[#E5E7EB]">150 kcal</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-
-            <div class="mt-5 grid grid-cols-4 gap-4 text-center text-[13px]">
-              <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
-                <div class="text-[20px] font-semibold leading-none">850</div>
-                <div class="text-[#6B7280] mt-1">kcal Total</div>
-              </div>
-              <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
-                <div class="text-[20px] font-semibold leading-none text-[#22C55E]">55g</div>
-                <div class="text-[#6B7280] mt-1">Protéines</div>
-              </div>
-              <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
-                <div class="text-[20px] font-semibold leading-none text-orange-500">60g</div>
-                <div class="text-[#6B7280] mt-1">Glucides</div>
-              </div>
-              <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
-                <div class="text-[20px] font-semibold leading-none text-orange-500">20g</div>
-                <div class="text-[#6B7280] mt-1">Lipides</div>
+                <div class="mt-5">
+                  <a href="/details/<%= recommendation.id %>">
+                    <button class="w-full bg-[#22C55E] hover:bg-[#22C55E]Dark text-white font-medium py-3 rounded-md cursor-pointer">Voir les détails</button>
+                  </a>
+                </div>
               </div>
             </div>
-
-            <div class="mt-5">
-              <a href="/details">
-                <button class="w-full bg-[#22C55E] hover:bg-[#22C55E]Dark text-white font-medium py-3 rounded-md cursor-pointer">Voir les détails</button>
-              </a>
+          <% }); %>
+        <% } else { %>
+          <div class="mt-6 bg-white border border-[#E5E7EB] rounded-xl shadow-card">
+            <div class="p-6 sm:p-8 text-center">
+              <div class="text-[#6B7280] text-lg mb-2">Aucune recommandation disponible</div>
+              <p class="text-[#6B7280] text-sm">
+                <% if (!user.goal) { %>
+                  Veuillez définir votre objectif nutritionnel pour recevoir des recommandations personnalisées.
+                <% } else { %>
+                  Aucune recommandation n'est disponible pour votre objectif (<%= user.goal %>).
+                <% } %>
+              </p>
             </div>
           </div>
-        </div>
+        <% } %>
 
       </section>
     </main>
