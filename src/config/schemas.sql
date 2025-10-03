@@ -14,15 +14,15 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
-  CREATE TABLE meals (
+-- Tableau des Repas Analyser
+CREATE TABLE meals (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT, -- if tied to a user
-  image_base64 LONGTEXT NOT NULL, -- store the Base64 image
-  mime_type VARCHAR(50) NOT NULL, -- like "image/jpeg"
+  user_id INT, 
+  image_base64 LONGTEXT NOT NULL, 
+  mime_type VARCHAR(50) NOT NULL, 
   calories INT,
   protein INT,
-  ingredients JSON, -- store array of strings
+  ingredients JSON, 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -3,7 +3,7 @@ import { HumanMessage } from "@langchain/core/messages";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const gemini = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash-lite", 
+  model: process.env.GOOGLE_API_VERSION, 
   apiKey: process.env.GOOGLE_API_KEY,
   temperature: 0.7,
 });
@@ -28,22 +28,24 @@ export async function analyzeMealAI(imageBase64, mimeType) {
     }
   `;
 
+  console.log("Sending request to Gemini...");
+
   const result = await model.generateContent([
     { text: prompt },
     { inlineData: { mimeType, data: imageBase64 } },
   ]);
 
   let text = result.response.candidates[0].content.parts[0].text;
+  console.log("Raw Gemini Output:", text);
 
-  
-  text = text.trim()
-             .replace(/^```json/, '')   
-             .replace(/```$/, '');     
+  text = text.trim().replace(/^```json/, "").replace(/```$/, "");
 
   try {
-    return JSON.parse(text); 
+    const parsed = JSON.parse(text);
+    console.log("Parsed JSON:", parsed);
+    return parsed;
   } catch (err) {
-    console.error("Raw Gemini output:", text);
+    console.error("Failed to parse JSON:", text);
     throw new Error("Gemini did not return valid JSON");
   }
 }
