@@ -11,6 +11,17 @@ import recommendationRoutes from './router/recommendation.js';
 
 const app = express();
 
+<<<<<<< HEAD
+=======
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'dev-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,       
+  }
+}));
+>>>>>>> d1d0fab4707cb75911a6f38b02c0f6281c263951
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
@@ -24,15 +35,7 @@ const newLocal = '';
 app.use('/assets', express.static("./src/assets/"));
 
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'dev-secret',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,       
-    maxAge: 1000 * 60 * 60 * 24
-  }
-}));
+
 
 app.set('view engine', 'ejs');
 app.set('views', './src/view');
