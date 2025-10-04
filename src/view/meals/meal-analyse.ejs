@@ -94,7 +94,7 @@
     "
     >
       <button id="analyzeBtn" type="submit" class="w-1/2 bg-[#22C55E] hover:bg-[#1eb254] text-white font-medium py-3 rounded-md cursor-pointer transition-all duration-200 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none hover:shadow-lg transform hover:scale-105">
-        <span id="buttonText">🔍 Analyser le repas</span>
+        <span id="buttonText"> Analyser le repas</span>
         <div id="loadingSpinner" class="hidden ml-2">
           <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -104,26 +104,13 @@
       </button>
     </div>
     
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 loading-overlay" style="display: none; align-items: center; justify-content: center;">
-      <div class="bg-white rounded-xl p-8 text-center max-w-sm mx-4 shadow-2xl loading-card">
-        <div class="mb-6">
-          <div class="relative">
-            <svg class="animate-spin h-16 w-16 text-[#22C55E] mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="h-8 w-8 bg-[#22C55E] rounded-full opacity-20 animate-ping"></div>
-            </div>
-          </div>
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-3">🔍 Analyse en cours</h3>
-        <p class="text-gray-600 text-sm mb-4">Notre IA analyse votre repas pour identifier les aliments et calculer les valeurs nutritionnelles...</p>
-        <div class="mt-6 bg-gray-200 rounded-full h-3 overflow-hidden">
-          <div class="bg-gradient-to-r from-[#22C55E] to-[#16a34a] h-3 rounded-full progress-bar"></div>
-        </div>
-        <p class="text-xs text-gray-500 mt-3">⏱️ Temps d'analyse : 5-15 secondes</p>
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center" style="display: none;">
+      <div class="bg-white rounded-xl p-6 text-center max-w-xs mx-4 shadow-xl flex flex-col items-center">
+        <svg class="animate-spin h-8 w-8 text-[#22C55E] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <div class="text-[#111827] text-base font-medium">Analyse en cours...</div>
       </div>
     </div>
   </form>

@@ -24,13 +24,13 @@ Analyze the meal in the image and output ONLY valid JSON in the following struct
 
 {
   "ingredients": [
-    { "name": string, "quantity": string, "calories": number }
+    { "name": string, "quantity": number, "calories": number }
   ],
   "totals": {
     "calories": number,
-    "protein": string,
-    "carbs": string,
-    "fats": string
+    "protein": number,
+    "carbs": number,
+    "fats": number
   }
 }
 

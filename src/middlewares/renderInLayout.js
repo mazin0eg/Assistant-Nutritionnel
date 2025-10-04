@@ -4,6 +4,7 @@ const allowedViews = new Set([
   'meals/mon-historique',
   'meals/meal-recommandation',
   'meals/meal-details',
+  'reports/weekly',
   
 ]);
 
