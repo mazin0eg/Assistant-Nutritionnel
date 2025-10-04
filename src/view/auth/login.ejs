@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Connexion</title>
+  <link rel="stylesheet" href="/output.css" />
+</head>
+<body class="min-h-screen">
+
+  <div class="grid min-h-screen grid-cols-2 items-stretch">
+
+    <section class="grid content-center gap-7 px-18 py-14">
+      <h1 class="m-0 text-[44px] leading-[1.12] font-bold tracking-[0.2px] text-black">
+        Connexion
+      </h1>
+
+      <form action="/auth/login" method="post" class="grid gap-4.5" autocomplete="off">
+
+        <!-- Email -->
+        <div class="grid gap-2">
+          <label for="email" class="text-[13px] font-medium text-muted">Email</label>
+          <input id="email" name="email" type="email" placeholder="Email" value="<%= old?.email || '' %>" class="w-full h-12 px-3.5 rounded-[10px] border border-gray-200 bg-white text-[15px] text-text transition placeholder:text-[#98a2b3]" required />
+          <% if (errors?.email) { %>
+            <p class="text-red-600 text-sm"><%= errors.email.msg %></p>
+          <% } %>
+        </div>
+
+        <!-- Mot de Passe -->
+        <div class="grid gap-2">
+          <label for="password" class="text-[13px] font-medium text-muted">Mot de passe</label>
+          <input id="password" name="password" type="password" placeholder="Mot de passe" class="w-full h-12 px-3.5 rounded-[10px] border border-gray-200 bg-white text-[15px] text-text transition placeholder:text-[#98a2b3]" required />
+          <% if (errors?.password) { %>
+            <p class="text-red-600 text-sm"><%= errors.password.msg %></p>
+          <% } %>
+        </div>
+
+        <!-- Bouton -->
+        <button type="submit" class="bg-[#22c55e] inline-grid place-items-center h-[52px] px-4 rounded-xl font-semibold text-[16px] text-white cursor-pointer select-none">
+          Se connecter
+        </button>
+
+        <p class="text-sm text-text">
+          Pas de compte ?
+          <a class="underline text-primary" href="/auth/register">Créer un compte</a>
+        </p>
+      </form>
+    </section>
+
+    <section class="relative overflow-hidden bg-[#eaeef4]">
+      <img class="absolute inset-0 h-full w-full object-cover" src="/assets/Food_Picture_1.jpg" alt="NutriTrack">
+    </section>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Inscription</title>
+  <link rel="stylesheet" href="/output.css" />
+</head>
+<body class="min-h-screen">
+
+  <div class="grid min-h-screen grid-cols-2 items-stretch">
+
+    <section class="grid content-center gap-7 px-18 py-14">
+      <h1 class="m-0 text-[44px] leading-[1.12] font-bold tracking-[0.2px] text-black">
+        Inscription
+      </h1>
+
+      <form action="/auth/register" method="post" class="grid gap-4.5" autocomplete="off">
+
+        <!-- Nom Complet -->
+        <div class="grid gap-2">
+          <label for="fullName" class="text-[13px] font-medium text-muted">Nom Complet</label>
+          <input id="fullName" name="fullName" type="text" value="<%= old?.fullName || '' %>" placeholder="Nom Complet" class="w-full h-12 px-3.5 rounded-[10px] border border-gray-200 bg-white text-[15px] text-text transition" required />
+          <% if (errors?.fullName) { %>
+            <p class="text-red-600 text-sm"><%= errors.fullName.msg %></p>
+          <% } %>
+        </div>
+
+        <!-- Email -->
+        <div class="grid gap-2">
+          <label for="email" class="text-[13px] font-medium text-muted">Email</label>
+          <input id="email" name="email" type="email" value="<%= old?.email || '' %>" placeholder="Email" class="w-full h-12 px-3.5 rounded-[10px] border border-gray-200 bg-white text-[15px] text-text transition" required />
+          <% if (errors?.email) { %>
+            <p class="text-red-600 text-sm"><%= errors.email.msg %></p>
+          <% } %>
+        </div>
+
+        <!-- Mot de Passe -->
+        <div class="grid gap-2">
+          <label for="password" class="text-[13px] font-medium text-muted">Mot de passe</label>
+          <input id="password" name="password" type="password" placeholder="Mot de passe" class="w-full h-12 px-3.5 rounded-[10px] border border-gray-200 bg-white text-[15px] text-text transition" required />
+          <% if (errors?.password) { %>
+            <p class="text-red-600 text-sm"><%= errors.password.msg %></p>
+          <% } %>
+        </div>
+
+        <!-- Objectif -->
+        <div class="grid gap-2">
+          <label for="goal" class="text-[13px] font-medium text-muted">Objectif</label>
+          <select id="goal" name="goal" class="w-full h-12 px-3.5 rounded-[10px] border border-gray-200 bg-white text-[15px] text-text" required>
+            <option value="" disabled selected>Objectif</option>
+            <option value="ATHLETE">Athlète</option>
+            <option value="PATIENT">Patient</option>
+            <option value="LOSE_WEIGHT">Perte de poids</option>
+            <option value="GAIN_WEIGHT">Prise de masse</option>
+          </select>
+          <% if (errors?.goal) { %>
+            <p class="text-red-600 text-sm"><%= errors.goal.msg %></p>
+          <% } %>
+        </div>
+
+        <!-- Bouton -->
+        <button type="submit" class="bg-[#22c55e] inline-grid place-items-center h-[52px] px-4 rounded-xl font-semibold text-[16px] text-white cursor-pointer select-none">
+          Créer un compte
+        </button>
+
+        <p class="text-sm text-text">
+          Déjà inscrit ?
+          <a class="underline text-primary" href="/auth/login">Se connecter</a>
+        </p>
+      </form>
+    </section>
+
+    <section class="relative overflow-hidden bg-[#eaeef4]">
+      <img class="absolute inset-0 h-full w-full object-cover" src="/assets/Food_Picture_1.jpg" alt="Cabinet médical lumineux" />
+    </section>
+  </div>
+
+</body>
+</html>

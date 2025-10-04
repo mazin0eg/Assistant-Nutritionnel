@@ -1,0 +1,38 @@
+{
+  "dependencies": {
+    "@langchain/core": "^0.3.77",
+    "@langchain/google-genai": "^0.2.18",
+    "@tailwindcss/cli": "^4.1.13",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.2",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "express-validator": "^7.2.1",
+    "multer": "^2.0.2",
+    "mysql2": "^3.15.1"
+  },
+  "name": "assistant-nutritionnel",
+  "version": "1.0.0",
+  "description": "NutriTrack est une application web dont l'objectif est d'accompagner les utilisateurs avec un **plan nutritionnel sur mesure**, en tenant compte de leur profil :",
+  "main": "index.js",
+  "type": "module",
+  "devDependencies": {
+    "tailwindcss": "^4.1.13"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch src/app.js",
+    "build:css": "tailwindcss -i ./src/input.css -o ./public/output.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mazin0eg/Assistant-Nutritionnel.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mazin0eg/Assistant-Nutritionnel/issues"
+  },
+  "homepage": "https://github.com/mazin0eg/Assistant-Nutritionnel#readme"
+}

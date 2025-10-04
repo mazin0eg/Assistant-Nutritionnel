@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutriTrack • Analyse d'un repas</title>
+  <link rel="stylesheet" href="/output.css" />
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { 
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .loading-overlay {
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    .loading-card {
+      animation: slideUp 0.3s ease-out;
+    }
+    
+    @keyframes progress {
+      0% { width: 0%; }
+      50% { width: 70%; }
+      100% { width: 85%; }
+    }
+    
+    .progress-bar {
+      animation: progress 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#F9FAFB] font-sans text-[#111827]">
+  <div class="flex min-h-screen">
+
+    <main class="flex-1">
+      <div class="h-14 md:h-16"></div>
+
+      <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <header class="mb-6">
+          <h1 class="text-[28px] leading-8 md:text-[30px] font-semibold mb-4">Ajouter un repas</h1>
+          <p class="text-[#6B7280] text-sm">Téléchargez une photo de votre repas pour l'analyser.</p>
+        </header>
+
+        <div class="bg-white border border-[#E5E7EB] rounded-xl shadow-card">
+          <div class="p-6 sm:p-8">
+            <div class="flex flex-col items-center justify-center border-2 border-dashed border-[#E5E7EB] rounded-xl py-10">
+  <div class="flex items-center justify-center h-12 w-12 rounded-full bg-gray-100 mb-4" id="uploadIcon">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
+    </svg>
+  </div>
+  
+  <!-- Image preview container -->
+  <div id="imagePreview" class="hidden flex-col items-center mb-4">
+    <div class="relative">
+      <img
+      style="
+    width: 150px;
+"
+ id="preview" src="#" alt="Aperçu" class="h-32 object-contain rounded-md shadow-sm border border-gray-200" />
+      <button type="button" id="removeImage" class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-sm border border-gray-200">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-gray-500">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <p class="text-xs text-[#6B7280] mt-2 font-medium" id="fileName"></p>
+  </div>
+
+  <p class="text-[13px] text-[#6B7280] mb-3" id="uploadText">Ajoutez votre photo ici</p>
+  
+  <form method="post" action="/ai/analyze" id="mealForm" enctype="multipart/form-data" class="w-full flex flex-col items-center">
+    <label for="file-upload" class="px-4 py-2 rounded-md border border-[#E5E7EB] bg-white hover:bg-gray-50 text-[13px] font-medium cursor-pointer transition-colors duration-200">
+      Choisir une photo
+    </label>
+    <input type="file" id="file-upload" name="mealImage" class="hidden" accept="image/*" />
+    
+    <div class="mt-6 w-full max-w-xs"
+    style="
+    display: flex;
+    justify-content: center;
+    "
+    >
+      <button id="analyzeBtn" type="submit" class="w-1/2 bg-[#22C55E] hover:bg-[#1eb254] text-white font-medium py-3 rounded-md cursor-pointer transition-all duration-200 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none hover:shadow-lg transform hover:scale-105">
+        <span id="buttonText"> Analyser le repas</span>
+        <div id="loadingSpinner" class="hidden ml-2">
+          <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      </button>
+    </div>
+    
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center" style="display: none;">
+      <div class="bg-white rounded-xl p-6 text-center max-w-xs mx-4 shadow-xl flex flex-col items-center">
+        <svg class="animate-spin h-8 w-8 text-[#22C55E] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <div class="text-[#111827] text-base font-medium">Analyse en cours...</div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('file-upload');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('preview');
+    const fileName = document.getElementById('fileName');
+    const uploadIcon = document.getElementById('uploadIcon');
+    const uploadText = document.getElementById('uploadText');
+    const removeBtn = document.getElementById('removeImage');
+    
+    fileInput.addEventListener('change', function(e) {
+      if (this.files && this.files[0]) {
+        const file = this.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          // Display the image preview
+          previewImg.src = e.target.result;
+          imagePreview.classList.remove('hidden');
+          imagePreview.classList.add('flex');
+          
+          // Hide the upload icon and update text
+          uploadIcon.classList.add('hidden');
+          uploadText.classList.add('hidden');
+          
+          // Show file name (limited to 20 characters)
+          let name = file.name;
+          if (name.length > 20) {
+            name = name.substring(0, 17) + '...';
+          }
+          fileName.textContent = name;
+        }
+        
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Remove image functionality
+    removeBtn.addEventListener('click', function() {
+      // Clear the file input
+      fileInput.value = '';
+      
+      // Hide the preview
+      imagePreview.classList.add('hidden');
+      imagePreview.classList.remove('flex');
+      
+      // Show the upload icon and text again
+      uploadIcon.classList.remove('hidden');
+      uploadText.classList.remove('hidden');
+    });
+    
+    // Handle form submission with loading state
+    const form = document.getElementById('mealForm');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const buttonText = document.getElementById('buttonText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    
+    form.addEventListener('submit', function(e) {
+      // Check if file is selected
+      if (!fileInput.files || !fileInput.files[0]) {
+        e.preventDefault();
+        alert('Veuillez sélectionner une image avant d\'analyser.');
+        return;
+      }
+      
+      // Show loading state immediately
+      analyzeBtn.disabled = true;
+      buttonText.innerHTML = '⏳ Analyse en cours...';
+      loadingSpinner.classList.remove('hidden');
+      
+      // Show full screen overlay after a brief moment
+      setTimeout(() => {
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.classList.remove('hidden');
+      }, 300);
+      
+      // Add a timeout fallback in case something goes wrong
+      setTimeout(() => {
+        if (loadingOverlay.style.display !== 'none') {
+          console.log('Analysis taking longer than expected...');
+        }
+      }, 30000); // 30 seconds timeout
+    });
+  });
+</script>
+        </div>
+        <h1><%=query %></h1>
+        <div class="mt-6 bg-white border border-[#E5E7EB] rounded-xl shadow-card">
+          <div class="p-6 sm:p-8">
+            <h2 class="font-semibold text-[16px] mb-4">Résultats de l'analyse</h2>
+
+            <div class="overflow-hidden border border-[#E5E7EB] rounded-lg">
+              <table class="w-full border-collapse">
+                <thead class="bg-gray-50 text-[13px] text-[#6B7280]">
+                  <tr class="grid grid-cols-12">
+                    <th class="col-span-6 sm:col-span-6 py-3 pl-4 text-left">Aliments</th>
+                    <th class="col-span-3 sm:col-span-3 py-3 text-left">Quantité</th>
+                    <th class="col-span-3 sm:col-span-3 py-3 text-left">Calories</th>
+                  </tr>
+                </thead>
+                <tbody class="text-[14px]">
+  <% if(query?.ingredients) { %>
+    <% query.ingredients.forEach(item => { %>
+      <tr class="grid grid-cols-12 items-center">
+        <td class="col-span-6 py-3 pl-4 border-t border-[#E5E7EB]"><%= item.name %></td>
+        <td class="col-span-3 py-3 border-t border-[#E5E7EB]"><%= item.quantity %></td>
+        <td class="col-span-3 py-3 border-t border-[#E5E7EB]"><%= item.calories %> kcal</td>
+      </tr>
+    <% }) %>
+  <% } %>
+</tbody>
+
+
+              </table>
+            </div>
+
+
+            <div class="mt-5 grid grid-cols-4 gap-4 text-center text-[13px]">
+  <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
+    <div class="text-[20px] font-semibold leading-none"><%= query?.totals?.calories %></div>
+    <div class="text-[#6B7280] mt-1">kcal Total</div>
+  </div>
+  <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
+    <div class="text-[20px] font-semibold leading-none text-[#22C55E]"><%= query?.totals?.protein %></div>
+    <div class="text-[#6B7280] mt-1">Protéines</div>
+  </div>
+  <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
+    <div class="text-[20px] font-semibold leading-none text-orange-500"><%= query?.totals?.carbs %></div>
+    <div class="text-[#6B7280] mt-1">Glucides</div>
+  </div>
+  <div class="col-span-1 border border-[#E5E7EB] rounded-xl py-4">
+    <div class="text-[20px] font-semibold leading-none text-orange-500"><%= query?.totals?.fats %></div>
+    <div class="text-[#6B7280] mt-1">Lipides</div>
+  </div>
+</div>
+
+
+            <div class="mt-5">
+              <a href="">
+                <button class="w-full bg-[#22C55E] hover:bg-[#22C55E]Dark text-white font-medium py-3 rounded-md cursor-pointer">Voir les détails</button>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+</body>
+</html>
