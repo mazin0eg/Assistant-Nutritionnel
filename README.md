@@ -54,65 +54,55 @@ Voici l’arborescence prévue du projet :
 
 ```
 nutritrack/
-├─ src/
-│  ├─ ui/                         # Couche UI/API
-│  │  ├─ app.js                   # Point d'entrée Express
-│  │  ├─ routes/                  # Définition des endpoints HTTP
-│  │  │  ├─ auth.routes.js
-│  │  │  ├─ profile.routes.js
-│  │  │  ├─ meals.routes.js
-│  │  │  └─ reports.routes.js
-│  │  ├─ controllers/             # Logique d'orchestration (API Layer)
-│  │  │  ├─ auth.controller.js
-│  │  │  ├─ profile.controller.js
-│  │  │  ├─ meals.controller.js
-│  │  │  └─ reports.controller.js
-│  │  ├─ views/                   # Templates EJS (UI visuelle)
-│  │  │  ├─ layouts/main.ejs
-│  │  │  ├─ auth/login.ejs
-│  │  │  ├─ auth/register.ejs
-│  │  │  ├─ profile/edit.ejs
-│  │  │  ├─ meals/new.ejs
-│  │  │  ├─ meals/show.ejs
-│  │  │  └─ reports/weekly.ejs
-│  │  └─ middlewares/             # Middlewares Express (UI concern)
-│  │     └─ auth.js
-│  │
-│  ├─ services/                   # Couche Métier (Business Layer)
-│  │  ├─ auth.service.js           # Login, Register, Tokens
-│  │  ├─ profile.service.js        # Gestion profil
-│  │  ├─ meals.service.js          # Gestion repas
-│  │  ├─ reports.service.js        # Génération des rapports
-│  │  ├─ nutrition.service.js      # Calculs et recommandations nutritionnelles
-│  │  └─ vision.service.js         # IA (LangChain + Gemini)
-│  │
-│  ├─ persistence/                 # Couche Persistance (DB Layer)
-│  │  ├─ pool.js                   # Connexion PostgreSQL
-│  │  └─ repositories/             # Requêtes SQL (Repositories)
-│  │     ├─ user.repository.js
-│  │     ├─ profile.repository.js
-│  │     ├─ meal.repository.js
-│  │     └─ report.repository.js
-│  │
-│  ├─ utils/                       # Fonctions utilitaires (communes)
-│  │  ├─ validators.js
-│  │  └─ calc.js
-│  │
-│  └─ config/                      # Fichiers de config
-│     └─ env.js
-│
-├─ public/                         # Fichiers statiques (CSS, JS client, uploads)
-├─ scripts/
-│  └─ schema.sql                   # Script SQL (PostgreSQL)
-├─ fixtures/
-│  └─ meal-analysis.sample.json    # Exemple JSON de sortie IA (mock)
-├─ docs/                           # Documentation (diagrammes, exports Figma)
-│  └─ class-diagram.png
-├─ tailwind.config.js
-├─ postcss.config.js
-├─ .env.example
-├─ README.md
-└─ package.json
+├── package.json
+├── README.md
+├── tailwind.config.js
+├── public/
+│   └── output.css
+├── src/
+│   ├── app.js
+│   ├── input.css
+│   ├── assets/
+│   │   └── Food_Picture_1.jpg
+│   ├── config/
+│   │   ├── database.js
+│   │   └── schemas.sql
+│   ├── controllers/
+│   │   ├── auth.controller.js
+│   │   ├── dashboard.controller.js
+│   │   ├── meal.controller.js
+│   │   └── meals.controller.js
+│   ├── middlewares/
+│   │   ├── auth.js
+│   │   ├── renderInLayout.js
+│   │   └── validate.js
+│   ├── models/
+│   │   ├── meal.model.js
+│   │   └── users.model.js
+│   ├── router/
+│   │   ├── ai.routes.js
+│   │   ├── auth.routes.js
+│   │   ├── router.js
+│   ├── services/
+│   │   ├── gemini.service.js
+│   ├── validators/
+│   │   └── auth.validators.js
+│   ├── view/
+│   │   ├── index.ejs
+│   │   ├── auth/
+│   │   │   ├── login.ejs
+│   │   │   └── register.ejs
+│   │   ├── layouts/
+│   │   │   └── main.ejs
+│   │   ├── meals/
+│   │   │   ├── meal-analyse.ejs
+│   │   │   ├── meal-details.ejs
+│   │   │   ├── meal-recommandation.ejs
+│   │   │   └── mon-historique.ejs
+│   │   ├── profile/
+│   │   └── reports/
+├── uploads/
+│   └── ... (fichiers uploadés)
 ```
 
 ---
